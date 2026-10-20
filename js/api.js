@@ -39,7 +39,7 @@ export function getLocation() {
 // "chance" = share of nearby active hotspots that reported the species in the last 30 days.
 export async function nearbyData(loc) {
   const k = `${round(loc.lat)},${round(loc.lng)}`;
-  return cached('nearby:' + k, 3 * H, async () => {
+  return cached('nearby2:' + k, 3 * H, async () => {
     const [recent, hotspots, notable] = await Promise.all([
       eb(`/data/obs/geo/recent?lat=${loc.lat}&lng=${loc.lng}&dist=25&back=30`),
       eb(`/ref/hotspot/geo?lat=${loc.lat}&lng=${loc.lng}&dist=15&back=30&fmt=json`),
@@ -63,7 +63,20 @@ export async function nearbyData(loc) {
     });
     const n = Math.max(1, lists.filter(l => l.length).length);
     for (const s of Object.values(species)) s.chance = Math.min(0.97, (s.hits + 0.3) / (n + 0.6));
+    // Closest place each bird was reported.
+    for (const o of [...recent, ...lists.flat()]) {
+      const s = species[o.sciName]; if (!s) continue;
+      const km = distKm(loc, o); if (s.nearKm == null || km < s.nearKm) s.nearKm = km;
+    }
     const county = spots[0]?.subnational2Code || hotspots[0]?.subnational2Code || null;
+    // Better odds: the share of recent nearby checklists that include each bird (eBird's own "frequency").
+    const freq = await checklistFrequency(county, loc).catch(() => null);
+    if (freq && freq.n >= 8) {
+      for (const s of Object.values(species)) {
+        const f = (freq.counts[s.code] || 0) / freq.n;
+        s.chance = Math.max(0.01, Math.min(0.97, f > 0 ? f : s.chance * 0.15));
+      }
+    }
     const state = spots[0]?.subnational1Code || hotspots[0]?.subnational1Code || null;
     return {
       at: Date.now(), loc, county, state, spotCount: n,
@@ -71,6 +84,25 @@ export async function nearbyData(loc) {
       notable: [...new Map(notable.map(o => [o.sciName, { code: o.speciesCode, name: o.comName, sci: o.sciName, obs: o, km: distKm(loc, o) }])).values()],
     };
   });
+}
+
+async function checklistFrequency(county, loc) {
+  if (!county) return null;
+  const lists = await eb(`/product/lists/${county}?maxResults=200`);
+  const near = lists.map(l => {
+    const la = l.loc?.latitude ?? l.loc?.lat, ln = l.loc?.longitude ?? l.loc?.lng;
+    return { id: l.subId || l.subID, km: la != null ? distKm(loc, { lat: la, lng: ln }) : 99 };
+  }).filter(l => l.id && l.km < 30).slice(0, 40);
+  const counts = {}; let n = 0;
+  for (let i = 0; i < near.length; i += 8) {
+    const views = await Promise.all(near.slice(i, i + 8).map(l => eb(`/product/checklist/view/${l.id}`).catch(() => null)));
+    for (const v of views) {
+      if (!v?.obs?.length) continue;
+      n++;
+      for (const code of new Set(v.obs.map(o => o.speciesCode))) counts[code] = (counts[code] || 0) + 1;
+    }
+  }
+  return { n, counts };
 }
 
 // All-time species list for a region, with names, for the regional dex.

@@ -26,6 +26,7 @@ function overlay(html, cls = '') {
 }
 const closeAll = () => { $('#layer').innerHTML = ''; };
 const icon = (sci, name, m) => birdSvg(speciesLook(sci, name), m);
+const HAB_WORD = { water: 'water', woods: 'woods', field: 'fields', town: 'towns', edge: 'brush', sky: 'open sky' };
 const habitatOf = (sci, name) => BY_SCI[sci]?.hab || ({ duck: 'water', heron: 'water', raptor: 'sky' }[speciesLook(sci, name).t]) || 'edge';
 const level = xp => Math.floor(Math.sqrt(xp / 50)) + 1;
 
@@ -154,7 +155,7 @@ async function renderNearby() {
   const hunt = dailyHunt(sp);
   const rares = state.nearby.notable.filter(s => !caught.has(s.sci)).slice(0, 5);
   const row = (s, extra = '') => `<button class="nr" data-sci="${esc(s.sci)}" data-name="${esc(s.name)}"><div class="ic">${icon(s.sci, s.name, { kind: 'sil', sil: '#45684f' })}</div>
-    <div class="mid"><b>${esc(s.name)}${extra}</b><div class="bar"><i style="width:${Math.max(3, Math.round(s.chance * 100))}%"></i></div><small>${Math.round(s.chance * 100)}% chance · ${esc(BY_SCI[s.sci]?.hab || habitatOf(s.sci, s.name))} · ${(s.best?.km ?? s.lastKm).toFixed(1)} km</small></div>
+    <div class="mid"><b>${esc(s.name)}${extra}</b><div class="bar"><i style="width:${Math.max(3, Math.round(s.chance * 100))}%"></i></div><small>${Math.round(s.chance * 100)}% chance · ${HAB_WORD[habitatOf(s.sci, s.name)]} · ${(s.nearKm ?? s.best?.km ?? s.lastKm).toFixed(1)} km</small></div>
     <span class="rw">+${tierOfChance(s.chance)}</span></button>`;
   v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr"><span><b>${toFind.length}</b> TO FIND</span></div></div>
     <div class="sub"><span>Within 25 km · last 30 days · ${state.nearby.spotCount} hotspots checked</span><button id="refresh" class="close">↻</button></div>
@@ -198,7 +199,7 @@ async function openBird(sci, nameHint) {
       const habCls = { water: 'b', sky: 'b', woods: 'g', field: 'g', edge: 'g', town: 'br' }[hab];
       body.innerHTML = `<div class="info"><div class="spr">${icon(sci, name, c ? undefined : { kind: 'sil', sil: '#2c4a36' })}</div><div class="idc">
         <div class="idbox"><div class="t1">${c ? pad3(idx + 1) + ' ' : ''}${esc(name)}</div><div class="k">${esc(cur?.cat || 'Bird')} · <i>${esc(sci)}</i></div></div>
-        <div class="types"><span class="ty ${habCls}">${hab}</span><span class="ty ${tier.rare ? 'r' : 'br'}">${tier.name}</span></div>
+        <div class="types"><span class="ty ${habCls}">${HAB_WORD[hab]}</span><span class="ty ${tier.rare ? 'r' : 'br'}">${tier.name}</span></div>
         ${cur?.len ? `<div class="ms"><span>Length</span><b>${cur.len} in</b><span>Wing</span><b>${cur.wing} in</b><span>Weight</span><b>${cur.wt} oz</b></div>` : ''}</div></div>
         <div class="flav" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
         <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>`;
@@ -580,7 +581,47 @@ function bindBall() {
   b.addEventListener('pointerup', end); b.addEventListener('pointercancel', () => { y0 = null; b.classList.remove('drag'); b.style.transform = ''; });
 }
 
+// Swipe right from the left edge to go back, like a native iPhone app.
+function bindSwipeBack() {
+  let el = null, x0 = 0, y0 = 0, dx = 0, locked = null;
+  const layer = $('#layer');
+  layer.addEventListener('touchstart', e => {
+    const top = layer.lastElementChild, t = e.touches[0];
+    if (!top || !top.querySelector('[data-x]') || t.clientX > 36) return;
+    el = top; x0 = t.clientX; y0 = t.clientY; dx = 0; locked = null;
+  }, { passive: true });
+  layer.addEventListener('touchmove', e => {
+    if (!el) return;
+    const t = e.touches[0], mx = t.clientX - x0, my = t.clientY - y0;
+    if (locked == null && (Math.abs(mx) > 8 || Math.abs(my) > 8)) locked = Math.abs(mx) > Math.abs(my);
+    if (!locked) return;
+    e.preventDefault();
+    dx = Math.max(0, mx);
+    el.classList.add('swiping'); el.style.transform = `translateX(${dx}px)`;
+  }, { passive: false });
+  layer.addEventListener('touchend', () => {
+    if (!el) return;
+    const target = el; el = null;
+    target.classList.remove('swiping'); target.classList.add('snap');
+    if (locked && dx > Math.min(110, innerWidth * 0.28)) {
+      target.style.transform = `translateX(${innerWidth}px)`;
+      setTimeout(() => target.querySelector('[data-x]')?.click(), 200);
+    } else {
+      target.style.transform = '';
+      setTimeout(() => target.classList.remove('snap'), 230);
+    }
+  });
+}
+
+function fitScreen() {
+  const standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches;
+  document.documentElement.classList.toggle('standalone', !!standalone);
+  if (standalone) document.documentElement.style.setProperty('--full', Math.max(screen.height, innerHeight) + 'px');
+}
+
 async function init() {
+  fitScreen();
+  bindSwipeBack();
   bindBall();
   $('#tabDex').onclick = () => setTab('dex');
   $('#tabNear').onclick = () => setTab('nearby');
