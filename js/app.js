@@ -276,7 +276,7 @@ async function openBird(sci, nameHint) {
         <div class="flav" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
         <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>
         ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}
-        ${SPRITES[slug(sci)] ? `<div class="credit">Sprite drawn from a photo on iNaturalist: ${esc(SPRITES[slug(sci)])}</div>` : ''}`;
+        ${SPRITES[slug(sci)] ? `<div class="credit">Sprite traced from a photo: ${esc(SPRITES[slug(sci)])}</div>` : ''}`;
       body.querySelector('#onMap')?.addEventListener('click', () => openCatchMap(sci));
       body.querySelector('#spk').onclick = e => {
         const b = e.currentTarget;
