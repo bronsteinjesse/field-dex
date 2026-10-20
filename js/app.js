@@ -94,7 +94,7 @@ async function renderDex() {
     <div class="hdr"><div class="ttl">DEX</div><div class="ctr"><span>LV <b>${level(state.xp)}</b></span><span class="mini">${ballSvg()} <b>${list.length}</b></span></div></div>
     <div class="sub" id="regionLine">${region.line || ''}</div>
     <div class="tools"><button id="cardBtn">TRAINER CARD</button><button id="mapBtn">CATCH MAP</button></div>
-    ${list.length ? `<div class="grid">${list.map((c, i) => `
+    ${list.length ? `<div class="grid">${list.map((c, i) => [c, i]).reverse().map(([c, i]) => `
       <button class="t" data-sci="${esc(c.sci)}"><div class="fig">${c.rare ? '<span class="shiny">✦</span>' : ''}${icon(c.sci, c.name)}<i class="gs"></i></div>
       <div class="no">No.${pad3(i + 1)}</div><div class="nm">${esc(c.name)}</div></button>`).join('')}</div>`
     : `<div class="empty">${ballSvg()}<div class="ttl">No birds caught yet</div><div>Tap the ball to describe a bird you're looking at, or swipe it up to record a bird singing.</div></div>`}`;
