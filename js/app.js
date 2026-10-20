@@ -4,6 +4,8 @@ import { catches, photos, kv } from './store.js';
 import * as api from './api.js';
 import { parseMarks, rank, versusNote } from './match.js';
 import * as sound from './sound.js';
+import { drawCard } from './card.js';
+import { drawMap } from './map.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -88,12 +90,15 @@ async function renderDex() {
   v.innerHTML = `
     <div class="hdr"><div class="ttl">DEX</div><div class="ctr"><span>LV <b>${level(state.xp)}</b></span><span class="mini">${ballSvg()} <b>${list.length}</b></span></div></div>
     <div class="sub" id="regionLine">${region.line || ''}</div>
+    <div class="tools"><button id="cardBtn">TRAINER CARD</button><button id="mapBtn">CATCH MAP</button></div>
     <div class="badges">${BADGES.map(([n, f, need]) => { const h = f(list); return `<span class="badge ${h >= need ? 'on' : ''}">${n} ${Math.min(h, need)}/${need}</span>`; }).join('')}</div>
     ${list.length ? `<div class="grid">${list.map((c, i) => `
       <button class="t" data-sci="${esc(c.sci)}"><div class="fig">${c.rare ? '<span class="shiny">✦</span>' : ''}${icon(c.sci, c.name)}<i class="gs"></i></div>
       <div class="no">No.${pad3(i + 1)}</div><div class="nm">${esc(c.name)}</div></button>`).join('')}</div>`
     : `<div class="empty">${ballSvg()}<div class="ttl">No birds caught yet</div><div>Tap the ball to describe a bird you're looking at, or swipe it up to record a bird singing.</div></div>`}`;
   v.querySelectorAll('.t').forEach(b => b.onclick = () => openBird(b.dataset.sci));
+  $('#cardBtn').onclick = openTrainerCard;
+  $('#mapBtn').onclick = () => openCatchMap();
   updateRegionLine(list);
 }
 
@@ -102,14 +107,15 @@ async function updateRegionLine(list) {
   if (!n || (!n.county && !n.state)) return;
   try {
     const caughtSci = new Set(list.map(c => c.sci));
-    const parts = [];
+    const parts = [], plain = [];
     for (const code of [n.county, n.state].filter(Boolean)) {
       const [sp, name] = await Promise.all([api.regionSpecies(code), api.regionName(code)]);
       if (!sp.length) continue;
       const have = sp.filter(s => caughtSci.has(s.sci)).length;
       parts.push(`<span>${esc(name.split(',')[0])} <b>${have}/${sp.length}</b> · ${Math.round(100 * have / sp.length)}%</span>`);
+      plain.push(`${name.split(',')[0]} ${have}/${sp.length}`);
     }
-    state.region = { line: parts.join('') };
+    state.region = { line: parts.join(''), text: plain[0] };
     const el = $('#regionLine'); if (el && state.tab === 'dex') el.innerHTML = state.region.line;
   } catch { /* regional dex is a bonus */ }
 }
@@ -162,10 +168,43 @@ async function renderNearby() {
     <div class="lab">TODAY'S HUNT · ${hunt.filter(h => h.done).length} OF ${hunt.length} FOUND</div>
     <div class="hunt">${hunt.map(h => `<button class="hrow nr ${h.done ? 'done' : ''}" data-sci="${esc(h.sci)}" data-name="${esc(h.name)}"><div class="ic">${icon(h.sci, h.name, h.done ? undefined : { kind: 'sil', sil: '#0c1610' })}</div>
       <div class="mid"><b>${esc(h.name)} <span class="tag">${h.lvl}</span></b><small>${h.done ? 'Found today!' : clue(h)}</small></div><span class="rw">+${h.xp}</span></button>`).join('') || '<p class="muted">Not enough reports nearby yet.</p>'}</div>
+    <div id="moves"></div>
     ${rares.length ? `<div class="lab">RARE BIRDS NEARBY · THIS WEEK</div>${rares.map(r => `<button class="nr" data-sci="${esc(r.sci)}" data-name="${esc(r.name)}"><div class="ic">${icon(r.sci, r.name, { kind: 'sil', sil: '#45684f' })}</div><div class="mid"><b>${esc(r.name)}<span class="tag">RARE</span></b><small>${esc(r.obs.locName)}, ${r.km.toFixed(1)} km · ${fmtDate(r.obs.obsDt)}</small></div><span class="rw">+150</span></button>`).join('')}` : ''}
     <div class="lab">STILL TO FIND</div>${toFind.map(s => row(s)).join('')}`;
   $('#refresh').onclick = async () => { await loadNearby(true); renderNearby(); };
   v.querySelectorAll('[data-sci]').forEach(b => b.onclick = () => openBird(b.dataset.sci, b.dataset.name));
+  renderMoves(caught);
+}
+
+// Migration: birds arriving (or leaving) your county this week.
+async function renderMoves(caught) {
+  const m = await api.migration(state.nearby?.county).catch(() => null);
+  const box = $('#moves');
+  if (!box || !m || (!m.arriving.length && !m.leaving.length)) return;
+  $('#tabNear').classList.remove('dot'); kv.set('movesSeen', today());
+  const row = (s, arriving) => `<button class="nr" data-sci="${esc(s.sci)}" data-name="${esc(s.name)}"><div class="ic">${icon(s.sci, s.name, caught.has(s.sci) ? undefined : { kind: 'sil', sil: '#45684f' })}</div>
+    <div class="mid"><b>${esc(s.name)}<span class="tag ${arriving ? 'up' : 'down'}">${arriving ? '▲ ARRIVING' : '▼ LEAVING'}</span></b><small>${arriving
+      ? `Reported ${s.now} of the last 7 days${s.before ? `, only ${s.before} two weeks ago` : ', none two weeks ago'}`
+      : `Reported ${s.before} days two weeks ago, ${s.now ? 'just once' : 'not at all'} this week`}</small></div>
+    <span class="rw">${caught.has(s.sci) ? '✓' : arriving ? 'NEW' : 'LAST CALL'}</span></button>`;
+  box.innerHTML = `<div class="lab">ON THE MOVE · THIS WEEK</div>${m.arriving.map(s => row(s, true)).join('')}${m.leaving.map(s => row(s, false)).join('')}`;
+  box.querySelectorAll('[data-sci]').forEach(b => b.onclick = () => openBird(b.dataset.sci, b.dataset.name));
+}
+
+const plural = n => /goose$/i.test(n) ? n.replace(/oose$/i, 'eese') : /(s|ch|sh|x)$/i.test(n) ? n + 'es' : n + 's';
+// Once a day, mention the birds arriving near you that you haven't caught yet.
+async function migrationAlert() {
+  try {
+    const m = await api.migration(state.nearby?.county);
+    const caught = new Set(state.catches.map(c => c.sci));
+    const fresh = m.arriving.filter(s => !caught.has(s.sci));
+    if (!fresh.length || (await kv.get('movesSeen')) === today()) return;
+    $('#tabNear').classList.add('dot');
+    if ((await kv.get('movesToast')) === today()) return;
+    kv.set('movesToast', today());
+    const names = fresh.slice(0, 2).map(s => plural(s.name));
+    toast(`Arriving this week: ${names.join(' and ')}${fresh.length > 2 ? ` and ${fresh.length - 2} more` : ''}. See Nearby.`, 5200);
+  } catch { /* alerts are a bonus */ }
 }
 const tierOfChance = c => c >= 0.55 ? 20 : c >= 0.25 ? 40 : 80;
 
@@ -191,18 +230,26 @@ async function openBird(sci, nameHint) {
   const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="muted">${c ? '' : 'Not caught yet'}</span></div>
     <div class="ptabs">${['INFO', 'PHOTOS', 'AREA', 'SONG'].map((t, i) => `<button data-tab="${t}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div>
     <div class="scroll" id="bp"></div>`, 'solid');
-  el.querySelector('[data-x]').onclick = () => el.remove();
+  el.querySelector('[data-x]').onclick = () => { hush(); el.remove(); };
   const body = el.querySelector('#bp');
   const tabs = {
     INFO: async () => {
       const tier = tierOf(sci), hab = habitatOf(sci, name);
       const habCls = { water: 'b', sky: 'b', woods: 'g', field: 'g', edge: 'g', town: 'br' }[hab];
       body.innerHTML = `<div class="info"><div class="spr">${icon(sci, name, c ? undefined : { kind: 'sil', sil: '#2c4a36' })}</div><div class="idc">
-        <div class="idbox"><div class="t1">${c ? pad3(idx + 1) + ' ' : ''}${esc(name)}</div><div class="k">${esc(cur?.cat || 'Bird')} · <i>${esc(sci)}</i></div></div>
+        <div class="idbox"><button class="spk" id="spk" aria-label="Read this entry aloud">${SPEAKER}</button><div class="t1">${c ? pad3(idx + 1) + ' ' : ''}${esc(name)}</div><div class="k">${esc(cur?.cat || 'Bird')} · <i>${esc(sci)}</i></div></div>
         <div class="types"><span class="ty ${habCls}">${HAB_WORD[hab]}</span><span class="ty ${tier.rare ? 'r' : 'br'}">${tier.name}</span></div>
         ${cur?.len ? `<div class="ms"><span>Length</span><b>${cur.len} in</b><span>Wing</span><b>${cur.wing} in</b><span>Weight</span><b>${cur.wt} oz</b></div>` : ''}</div></div>
         <div class="flav" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
-        <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>`;
+        <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>
+        ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}`;
+      body.querySelector('#onMap')?.addEventListener('click', () => openCatchMap(sci));
+      body.querySelector('#spk').onclick = e => {
+        const b = e.currentTarget;
+        if (b.classList.contains('on')) { hush(); return; }
+        const flav = body.querySelector('#flav')?.textContent || '';
+        speak([name + '.', cur?.cat ? `The ${cur.cat}.` : '', flav === 'Loading…' ? '' : flav].join(' '), b);
+      };
       if (!cur?.fact) {
         const t = await api.taxonInfo(sci).catch(() => null);
         const f = body.querySelector('#flav');
@@ -237,9 +284,33 @@ async function openBird(sci, nameHint) {
       }
     },
   };
-  const go = t => { el.querySelectorAll('.ptabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); tabs[t](); };
+  const go = t => { hush(); el.querySelectorAll('.ptabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); tabs[t](); };
   el.querySelectorAll('.ptabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
   go('INFO');
+}
+
+/* ---------- DEX VOICE ---------- */
+const SPEAKER = '<svg viewBox="0 0 20 20" aria-hidden="true"><path d="M3 7h3l5-4v14l-5-4H3z" fill="currentColor"/><path d="M14 6.5a5 5 0 0 1 0 7M16.5 4a8.5 8.5 0 0 1 0 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>';
+function dexVoice() {
+  const vs = speechSynthesis.getVoices().filter(v => v.lang?.startsWith('en'));
+  // A steady, even voice suits a Pokédex best. Prefer the ones that sound most like it.
+  return ['Daniel', 'Fred', 'Alex', 'Aaron', 'Arthur', 'Google UK English Male'].map(n => vs.find(v => v.name.includes(n))).find(Boolean)
+    || vs.find(v => v.lang === 'en-US') || vs[0] || null;
+}
+function speak(text, btn) {
+  if (!('speechSynthesis' in window)) { toast('This phone can\'t read aloud here.'); return; }
+  hush();
+  const u = new SpeechSynthesisUtterance(text.replace(/\s+/g, ' ').trim());
+  const v = dexVoice(); if (v) { u.voice = v; u.lang = v.lang; }
+  u.pitch = 0.7; u.rate = 1.04;
+  btn?.classList.add('on');
+  u.onend = u.onerror = () => btn?.classList.remove('on');
+  speak.btn = btn;
+  speechSynthesis.speak(u);
+}
+function hush() {
+  if ('speechSynthesis' in window) speechSynthesis.cancel();
+  speak.btn?.classList.remove('on');
 }
 
 /* ---------- CATCH: talk ---------- */
@@ -482,6 +553,61 @@ async function saveCatch(c, ctx) {
   return { isNew, no, count: rec.count, xp: gain, tier: tier.name, level: level(state.xp), levelUp: level(state.xp) > before };
 }
 
+/* ---------- TRAINER CARD ---------- */
+async function openTrainerCard() {
+  const list = state.catches, lv = level(state.xp);
+  const fav = [...list].sort((a, b) => b.count - a.count || a.first.localeCompare(b.first))[0];
+  const recent = [...list].sort((a, b) => lastSeen(b).localeCompare(lastSeen(a))).slice(0, 6);
+  const first = list.map(c => c.first).sort()[0];
+  const data = () => ({
+    trainer: trainer || 'Trainer', level: lv, xp: state.xp, xpThis: 50 * (lv - 1) ** 2, xpNext: 50 * lv ** 2,
+    caught: list.length, rare: list.filter(c => c.rare).length, region: state.region?.text || '',
+    since: first ? new Date(first).toLocaleDateString(undefined, { month: 'short', year: 'numeric' }) : '',
+    badges: BADGES.map(([n, f, need]) => { const h = f(list); return { n, on: h >= need, prog: `${Math.min(h, need)}/${need}` }; }),
+    fav: fav && { svg: icon(fav.sci, fav.name), name: fav.name, count: fav.count },
+    recent: recent.map(c => icon(c.sci, c.name)),
+  });
+  let trainer = (await kv.get('trainer')) || '';
+  const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">TRAINER CARD</span></div>
+    <div class="scroll"><div class="tcard" id="tc"><span class="muted">Drawing…</span></div>
+    <div class="lab">TRAINER NAME</div><input id="tn" value="${esc(trainer)}" placeholder="Your name" maxlength="16" autocomplete="off">
+    <div style="height:10px"></div><button class="btn full" id="share">SHARE CARD</button></div>`, 'solid');
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  let cv = null;
+  const draw = async () => {
+    cv = await drawCard(data());
+    const box = el.querySelector('#tc'); box.innerHTML = ''; cv.setAttribute('aria-label', 'Your trainer card'); box.appendChild(cv);
+  };
+  await draw();
+  let t;
+  el.querySelector('#tn').oninput = e => { trainer = e.target.value.trim(); clearTimeout(t); t = setTimeout(() => { kv.set('trainer', trainer); draw(); }, 300); };
+  el.querySelector('#share').onclick = async () => {
+    const blob = await new Promise(r => cv.toBlob(r, 'image/png'));
+    const file = new File([blob], 'field-dex-trainer-card.png', { type: 'image/png' });
+    if (navigator.canShare?.({ files: [file] })) { try { await navigator.share({ files: [file], title: 'My Field Dex' }); return; } catch (e) { if (e.name === 'AbortError') return; } }
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = file.name; a.click();
+  };
+}
+const lastSeen = c => c.sightings.at(-1)?.date || c.first;
+
+/* ---------- CATCH MAP ---------- */
+async function openCatchMap(only) {
+  const pts = state.catches.flatMap(c => c.sightings.filter(s => s.lat != null && s.lng != null)
+    .map(s => ({ sci: c.sci, name: c.name, lat: s.lat, lng: s.lng, date: s.date, method: s.method, svg: icon(c.sci, c.name) })));
+  const birds = [...new Map(pts.map(p => [p.sci, p.name])).entries()].sort((a, b) => a[1].localeCompare(b[1]));
+  const noLoc = state.catches.filter(c => !c.sightings.some(s => s.lat != null)).length;
+  const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">CATCH MAP</span></div>
+    <select id="mf"><option value="">All birds · ${pts.length} catches</option>${birds.map(([sci, n]) => `<option value="${esc(sci)}" ${sci === only ? 'selected' : ''}>${esc(n)} · ${pts.filter(p => p.sci === sci).length}</option>`).join('')}</select>
+    <div class="mapbox" id="mp"></div>
+    <small class="muted mapnote">${pts.length ? '' : 'Catches you make from now on are pinned where you caught them. '}${noLoc ? `${noLoc} bird${noLoc > 1 ? 's' : ''} without a location (imported or caught with location off).` : ''}</small>`, 'solid');
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  const filt = sci => sci ? pts.filter(p => p.sci === sci) : pts;
+  try {
+    const m = await drawMap(el.querySelector('#mp'), filt(only), (sci, name) => openBird(sci, name));
+    el.querySelector('#mf').onchange = e => { m.map.closePopup(); m.show(filt(e.target.value)); };
+  } catch { el.querySelector('#mp').innerHTML = '<p class="muted" style="padding:12px">The map needs a connection the first time.</p>'; }
+}
+
 /* ---------- SETTINGS ---------- */
 async function openSettings() {
   const key = await api.ebirdKey();
@@ -626,11 +752,12 @@ async function init() {
   $('#tabDex').onclick = () => setTab('dex');
   $('#tabNear').onclick = () => setTab('nearby');
   $('#settingsBtn').onclick = openSettings;
+  document.querySelector('.lens').onclick = openTrainerCard;
   state.catches = await catches.all();
   state.xp = (await kv.get('xp')) || 0;
   render();
   // Warm up location + nearby in the background so catching is fast.
-  if (await api.ebirdKey()) loadNearby().then(() => state.tab === 'dex' && updateRegionLine(state.catches));
+  if (await api.ebirdKey()) loadNearby().then(() => { if (state.tab === 'dex') updateRegionLine(state.catches); migrationAlert(); });
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 init();

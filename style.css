@@ -179,3 +179,32 @@ canvas.spec{width:100%;height:150px;border-radius:3px;background:#10201a;box-sha
 .ov.swiping{transition:none}
 .ov.snap{transition:transform .22s ease-out}
 .ov .edge{position:absolute;left:0;top:0;bottom:0;width:6px;background:linear-gradient(90deg,rgba(231,194,126,.25),transparent);opacity:0}
+
+/* Trainer card, catch map, migration, dex voice */
+.lens{cursor:pointer}
+.tools{display:flex;gap:6px;padding:6px 2px 0}
+.tools button{flex:1;font-family:var(--px);font-size:11px;letter-spacing:.05em;padding:7px 0;border-radius:3px;background:var(--bark);color:var(--gold);box-shadow:inset -2px -2px 0 rgba(0,0,0,.3)}
+.tcard{margin-top:4px;min-height:120px;display:grid;place-items:center}
+.tcard canvas{width:100%;height:auto;border-radius:10px;box-shadow:0 6px 18px rgba(0,0,0,.4)}
+select{font:inherit;font-size:14px;color:var(--paper-ink);background:var(--cream);border:2px solid var(--bark);border-radius:3px;padding:8px 10px;width:100%;-webkit-appearance:none;appearance:none}
+.mapbox{flex:1;min-height:0;margin-top:8px;border-radius:4px;overflow:hidden;box-shadow:inset 0 0 0 2px var(--bark);background:#20372a}
+.mapbox .leaflet-tile-pane{filter:sepia(.35) saturate(.75) hue-rotate(35deg) brightness(.8) contrast(1.05)}
+.mapnote{display:block;margin:6px 2px 0;font-size:11px}
+.pin{background:none;border:0;filter:drop-shadow(0 2px 2px rgba(0,0,0,.55))}
+.pin svg{width:40px;height:40px}
+.leaflet-popup-content-wrapper,.leaflet-popup-tip{background:var(--cream);color:var(--paper-ink);border-radius:4px;box-shadow:0 0 0 2px var(--bark)}
+.leaflet-popup-content{margin:10px 12px}
+.mpop b{display:block;font-family:var(--px);font-size:14px}
+.mpop small{display:block;color:#5a5446;margin:2px 0 8px}
+.mpop .btn{font-size:11px;padding:7px 10px}
+.leaflet-container{font-family:var(--sans)}
+.leaflet-control-attribution{font-size:9px;background:rgba(233,228,210,.7)!important}
+.idbox{position:relative}
+.spk{position:absolute;right:5px;top:5px;width:26px;height:26px;border-radius:3px;background:var(--bark);color:var(--gold);display:grid;place-items:center}
+.spk svg{width:16px;height:16px}
+.spk.on{background:var(--acc);color:var(--paper-ink);animation:blink2 .8s steps(2) infinite}
+@keyframes blink2{50%{opacity:.6}}
+.idbox .t1{padding-right:30px}
+.tag.up{background:#6fae5a}.tag.down{background:#93a892}
+.tabs>button.dot{position:relative}
+.tabs>button.dot::after{content:'';position:absolute;top:4px;right:14px;width:7px;height:7px;border-radius:50%;background:var(--red);box-shadow:0 0 0 1.5px var(--ink)}

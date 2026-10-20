@@ -167,3 +167,30 @@ export async function sounds(sci) {
     }))).filter(s => s.url).slice(0, 6);
   });
 }
+
+// Migration: birds reported on many more days this week than two weeks ago (arriving), or the reverse (leaving).
+// Uses eBird's day-by-day sightings for your county: the last 7 days vs days 15-21 ago.
+export async function migration(region) {
+  if (!region) return { arriving: [], leaving: [] };
+  const day = n => { const d = new Date(Date.now() - n * DAY); return `${d.getFullYear()}/${d.getMonth() + 1}/${d.getDate()}`; };
+  return cached(`move:${region}:${day(0)}`, 12 * H, async () => {
+    const tally = {};
+    const week = async (from, key) => {
+      const days = await Promise.all([0, 1, 2, 3, 4, 5, 6].map(i =>
+        eb(`/data/obs/${region}/historic/${day(from + i)}?rank=mrec&detail=simple&cat=species`).catch(() => [])));
+      for (const list of days) for (const o of list) {
+        const s = tally[o.sciName] ??= { code: o.speciesCode, name: o.comName, sci: o.sciName, now: 0, before: 0, nowBirds: 0, beforeBirds: 0 };
+        s[key]++; s[key + 'Birds'] += o.howMany || 1;
+      }
+      return days.filter(d => d.length).length;
+    };
+    const [a, b] = await Promise.all([week(1, 'now'), week(15, 'before')]);
+    if (a < 4 || b < 4) return { arriving: [], leaving: [] };
+    const all = Object.values(tally);
+    const arriving = all.filter(s => s.now >= 3 && (s.before === 0 || (s.now - s.before >= 3 && s.nowBirds >= 3 * s.beforeBirds)))
+      .sort((x, y) => (y.now - y.before) - (x.now - x.before) || y.nowBirds - x.nowBirds).slice(0, 8);
+    const leaving = all.filter(s => s.before >= 4 && s.now <= 1)
+      .sort((x, y) => (y.before - y.now) - (x.before - x.now)).slice(0, 5);
+    return { arriving, leaving };
+  });
+}
