@@ -14,7 +14,7 @@ jobs:
         with: { python-version: '3.11' }
       - run: pip install "rembg[cpu]" pillow
       - run: python tools/art_sample.py
-        env: { SPECIES: tools/species-fix.txt }
+        env: { SPECIES: tools/species-fix.txt, MAX: 10 }
       - run: |
           git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
           git add art && git commit -m "Bird photo cutouts" && git push

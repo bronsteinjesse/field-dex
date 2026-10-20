@@ -22,10 +22,10 @@ for sci in BIRDS:
     full = json.loads(get(f"https://api.inaturalist.org/v1/taxa/{t['id']}"))["results"][0]
     slug = sci.lower().replace(" ", "-")
     n = 0
-    for tp in full["taxon_photos"][:12]:
+    for tp in full["taxon_photos"][:30]:
         p = tp["photo"]
         if p.get("license_code") not in OK: continue
-        if n >= 5: break
+        if n >= int(os.environ.get("MAX", 5)): break
         img = Image.open(io.BytesIO(get(p["url"].replace("square", "large")))).convert("RGB")
         cut = remove(img, session=sess)
         box = cut.getchannel("A").point(lambda a: 255 if a > 40 else 0).getbbox()
