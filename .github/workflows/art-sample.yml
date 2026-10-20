@@ -1,0 +1,19 @@
+name: art sample
+on:
+  push:
+    branches: [art-sample]
+    paths: [tools/art_sample.py, .github/workflows/art-sample.yml]
+permissions:
+  contents: write
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install "rembg[cpu]" pillow
+      - run: python tools/art_sample.py
+      - run: |
+          git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
+          git add art-sample && git commit -m "Art sample images" && git push
