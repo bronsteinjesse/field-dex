@@ -1,10 +1,10 @@
 // Offline support: the app shell is cached on install; the sound model and photos are cached the first time they load.
-const SHELL = 'shell-v17', RUNTIME = 'runtime-v1';
-const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'js/looks.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png'];
+const SHELL = 'shell-v18', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v1';
+const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'js/looks.js', 'js/sprites.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
-  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL && k !== RUNTIME).map(k => caches.delete(k)))));
+  e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== SHELL && k !== RUNTIME && k !== SPRITES).map(k => caches.delete(k)))));
   self.clients.claim();
 });
 self.addEventListener('fetch', e => {
@@ -13,8 +13,10 @@ self.addEventListener('fetch', e => {
   // Live data always goes to the network.
   if (u.hostname === 'api.ebird.org' || u.hostname === 'api.inaturalist.org') return;
   const heavy = u.pathname.includes('/models/') || u.pathname.includes('/vendor/') || /inaturalist|fonts\.(googleapis|gstatic)/.test(u.hostname);
-  if (heavy) {
-    e.respondWith(caches.open(RUNTIME).then(async c => {
+  // Bird sprites rarely change: cache first (bump SPRITES to refresh them).
+  const sprite = u.origin === location.origin && u.pathname.includes('/img/birds/');
+  if (heavy || sprite) {
+    e.respondWith(caches.open(sprite ? SPRITES : RUNTIME).then(async c => {
       const hit = await c.match(e.request);
       if (hit) return hit;
       const r = await fetch(e.request);

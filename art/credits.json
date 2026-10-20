@@ -3327,46 +3327,6 @@
   "license": "cc-by",
   "photo": 308317605
  },
- "larus-argentatus-0": {
-  "sci": "Larus argentatus",
-  "taxon": "Larus smithsonianus",
-  "name": "American Herring Gull",
-  "by": "(c) Guy Lemelin, some rights reserved (CC BY-NC), uploaded by Guy Lemelin",
-  "license": "cc-by-nc",
-  "photo": 183734844
- },
- "larus-argentatus-1": {
-  "sci": "Larus argentatus",
-  "taxon": "Larus smithsonianus",
-  "name": "American Herring Gull",
-  "by": "(c) Andrea Kreuzhage, some rights reserved (CC BY-NC), uploaded by Andrea Kreuzhage",
-  "license": "cc-by-nc",
-  "photo": 100940156
- },
- "larus-argentatus-2": {
-  "sci": "Larus argentatus",
-  "taxon": "Larus smithsonianus",
-  "name": "American Herring Gull",
-  "by": "(c) Andrea Kreuzhage, some rights reserved (CC BY-NC), uploaded by Andrea Kreuzhage",
-  "license": "cc-by-nc",
-  "photo": 100940107
- },
- "larus-argentatus-3": {
-  "sci": "Larus argentatus",
-  "taxon": "Larus smithsonianus",
-  "name": "American Herring Gull",
-  "by": "(c) David Vander Pluym, some rights reserved (CC BY-NC), uploaded by David Vander Pluym",
-  "license": "cc-by-nc",
-  "photo": 394141021
- },
- "larus-argentatus-4": {
-  "sci": "Larus argentatus",
-  "taxon": "Larus smithsonianus",
-  "name": "American Herring Gull",
-  "by": "(c) Chris Cheatle, some rights reserved (CC BY-NC), uploaded by Chris Cheatle",
-  "license": "cc-by-nc",
-  "photo": 17311211
- },
  "corvus-cornix-0": {
   "sci": "Corvus cornix",
   "taxon": "Corvus cornix",
@@ -3406,38 +3366,6 @@
   "by": "(c) Sergey Mayorov, some rights reserved (CC BY-NC), uploaded by Sergey Mayorov",
   "license": "cc-by-nc",
   "photo": 63457489
- },
- "pica-pica-0": {
-  "sci": "Pica pica",
-  "taxon": "Dryobates pubescens",
-  "name": "Downy Woodpecker",
-  "by": "(c) Alexis Williams, some rights reserved (CC BY), uploaded by Alexis Williams",
-  "license": "cc-by",
-  "photo": 177108982
- },
- "pica-pica-1": {
-  "sci": "Pica pica",
-  "taxon": "Dryobates pubescens",
-  "name": "Downy Woodpecker",
-  "by": "(c) Craig K. Hunt, some rights reserved (CC BY-NC), uploaded by Craig K. Hunt",
-  "license": "cc-by-nc",
-  "photo": 402494560
- },
- "pica-pica-2": {
-  "sci": "Pica pica",
-  "taxon": "Dryobates pubescens",
-  "name": "Downy Woodpecker",
-  "by": "(c) Thomas Shahan, some rights reserved (CC BY-NC), uploaded by Thomas Shahan",
-  "license": "cc-by-nc",
-  "photo": 355593223
- },
- "pica-pica-3": {
-  "sci": "Pica pica",
-  "taxon": "Dryobates pubescens",
-  "name": "Downy Woodpecker",
-  "by": "(c) Tom Murray, some rights reserved (CC BY-NC), uploaded by Tom Murray",
-  "license": "cc-by-nc",
-  "photo": 100335433
  },
  "columba-palumbus-0": {
   "sci": "Columba palumbus",

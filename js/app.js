@@ -7,6 +7,7 @@ import * as sound from './sound.js';
 import { drawCard } from './card.js';
 import { drawMap } from './map.js';
 import * as forecast from './forecast.js';
+import { SPRITES } from './sprites.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -28,7 +29,14 @@ function overlay(html, cls = '') {
   return el;
 }
 const closeAll = () => { $('#layer').innerHTML = ''; };
-const icon = (sci, name, m) => birdSvg(speciesLook(sci, name), m);
+// Game Boy Color style sprites (img/birds) where we have one; the drawn icon otherwise.
+const slug = sci => sci.toLowerCase().replace(/ /g, '-');
+const spriteSrc = sci => SPRITES[slug(sci)] ? `img/birds/${slug(sci)}.png` : null;
+const icon = (sci, name, m) => {
+  const src = spriteSrc(sci);
+  if (!src) return birdSvg(speciesLook(sci, name), m);
+  return m?.kind === 'sil' ? `<i class="px sil" style="-webkit-mask-image:url(${src});mask-image:url(${src});background:${m.sil}"></i>` : `<img class="px" src="${src}" alt="">`;
+};
 const HAB_WORD = { water: 'water', woods: 'woods', field: 'fields', town: 'towns', edge: 'brush', sky: 'open sky' };
 const habitatOf = (sci, name) => BY_SCI[sci]?.hab || ({ duck: 'water', heron: 'water', raptor: 'sky' }[speciesLook(sci, name).t]) || 'edge';
 const level = xp => Math.floor(Math.sqrt(xp / 50)) + 1;
@@ -267,7 +275,8 @@ async function openBird(sci, nameHint) {
         ${cur?.len ? `<div class="ms"><span>Length</span><b>${cur.len} in</b><span>Wing</span><b>${cur.wing} in</b><span>Weight</span><b>${cur.wt} oz</b></div>` : ''}</div></div>
         <div class="flav" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
         <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>
-        ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}`;
+        ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}
+        ${SPRITES[slug(sci)] ? `<div class="credit">Sprite drawn from a photo by ${esc(SPRITES[slug(sci)])} · iNaturalist</div>` : ''}`;
       body.querySelector('#onMap')?.addEventListener('click', () => openCatchMap(sci));
       body.querySelector('#spk').onclick = e => {
         const b = e.currentTarget;

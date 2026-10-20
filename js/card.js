@@ -3,12 +3,14 @@ const W = 1200, H = 760;
 const C = { bark: '#2b1d13', bg: '#1a3023', panel: '#24402e', panel2: '#2c4b37', fg: '#e6eadb', mut: '#93a892', gold: '#e7c27e', acc: '#d39b4a', cream: '#e9e4d2', ink: '#22201a' };
 const PX = '"Pixelify Sans", ui-monospace, monospace', SANS = 'Figtree, system-ui, sans-serif';
 
+// Loads a bird icon for drawing: an inline svg string, or an <img> tag pointing at a pixel sprite.
 function svgImage(svg) {
   return new Promise(res => {
-    const url = URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
+    const src = /^<img[^>]*src="([^"]+)"/.exec(svg)?.[1];
+    const url = src || URL.createObjectURL(new Blob([svg], { type: 'image/svg+xml' }));
     const img = new Image();
-    img.onload = () => { URL.revokeObjectURL(url); res(img); };
-    img.onerror = () => { URL.revokeObjectURL(url); res(null); };
+    img.onload = () => { if (!src) URL.revokeObjectURL(url); res(img); };
+    img.onerror = () => { if (!src) URL.revokeObjectURL(url); res(null); };
     img.src = url;
   });
 }
@@ -25,6 +27,7 @@ export async function drawCard(d) {
   await Promise.all([document.fonts?.load(`700 40px ${PX}`), document.fonts?.load(`600 20px ${SANS}`)].map(p => p?.catch(() => {})));
   const cv = document.createElement('canvas'); cv.width = W; cv.height = H;
   const g = cv.getContext('2d');
+  g.imageSmoothingEnabled = false; // keep pixel sprites crisp
   g.textBaseline = 'alphabetic';
 
   // Device frame and grid screen.

@@ -2,7 +2,7 @@ name: art sample
 on:
   push:
     branches: [art-sample]
-    paths: [tools/art_sample.py, tools/species.txt, .github/workflows/art-sample.yml]
+    paths: [tools/art_sample.py, tools/species.txt, tools/species-fix.txt, .github/workflows/art-sample.yml]
 permissions:
   contents: write
 jobs:
@@ -14,6 +14,7 @@ jobs:
         with: { python-version: '3.11' }
       - run: pip install "rembg[cpu]" pillow
       - run: python tools/art_sample.py
+        env: { SPECIES: tools/species-fix.txt }
       - run: |
           git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
           git add art && git commit -m "Bird photo cutouts" && git push

@@ -3,7 +3,8 @@ import io, json, os, sys, urllib.request, urllib.parse
 from PIL import Image
 from rembg import remove, new_session
 
-BIRDS = open("tools/species.txt").read().split("\n")
+BIRDS = open(os.environ.get("SPECIES", "tools/species.txt")).read().split()  # pairs of words
+BIRDS = [" ".join(BIRDS[i:i + 2]) for i in range(0, len(BIRDS), 2)]
 _OLD = ["Upupa epops", "Curruca melanocephala", "Cyanocitta cristata", "Cardinalis cardinalis", "Turdus migratorius",
          "Poecile atricapillus", "Spinus tristis", "Melanerpes carolinus", "Anas platyrhynchos", "Ardea herodias",
          "Archilochus colubris", "Zonotrichia albicollis", "Setophaga magnolia", "Megaceryle alcyon", "Platalea ajaja", "Egretta thula"]
@@ -13,10 +14,11 @@ sess = new_session("isnet-general-use")
 OUT = "art"
 os.makedirs(OUT, exist_ok=True)
 OK = {"cc0", "cc-by", "cc-by-nc", "cc-by-sa", "cc-by-nc-sa"}
-credits = {}
+credits = json.load(open(f"{OUT}/credits.json")) if os.path.exists(f"{OUT}/credits.json") else {}
 for sci in BIRDS:
   try:
-    t = json.loads(get("https://api.inaturalist.org/v1/taxa?rank=species&per_page=1&q=" + urllib.parse.quote(sci)))["results"][0]
+    res = json.loads(get("https://api.inaturalist.org/v1/taxa?rank=species&per_page=10&q=" + urllib.parse.quote(sci)))["results"]
+    t = next((r for r in res if r["name"] == sci), res[0])
     full = json.loads(get(f"https://api.inaturalist.org/v1/taxa/{t['id']}"))["results"][0]
     slug = sci.lower().replace(" ", "-")
     n = 0
