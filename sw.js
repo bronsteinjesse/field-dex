@@ -1,5 +1,5 @@
 // Offline support: the app shell is cached on install; the sound model and photos are cached the first time they load.
-const SHELL = 'shell-v20', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v2';
+const SHELL = 'shell-v21', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v3';
 const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'js/looks.js', 'js/sprites.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
