@@ -40,8 +40,8 @@ img{max-width:100%;display:block}
 
 .grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px 8px;padding:12px 2px}
 .t{display:flex;flex-direction:column;align-items:center;text-align:center;min-width:0}
-.fig{position:relative;width:86%;aspect-ratio:1;display:grid;place-items:center}
-.fig>svg{position:relative;z-index:1;width:100%;height:100%;filter:drop-shadow(0 5px 4px rgba(0,0,0,.4))}
+.fig{position:relative;width:70%;margin:6% 0 2%;aspect-ratio:1;display:grid;place-items:center}
+.fig>svg{position:relative;z-index:1;width:100%;height:100%;filter:drop-shadow(0 3px 2px rgba(0,0,0,.3))}
 .fig .gs{position:absolute;bottom:5%;left:26%;width:48%;height:8%;border-radius:50%;background:rgba(0,0,0,.42);filter:blur(2px)}
 .fig .shiny{position:absolute;top:0;right:4%;z-index:2;color:var(--gold);font-family:var(--px);font-size:14px}
 .t .no{font-family:var(--px);font-size:10px;color:var(--mut)}
