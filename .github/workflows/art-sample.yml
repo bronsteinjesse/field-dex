@@ -2,7 +2,7 @@ name: art sample
 on:
   push:
     branches: [art-sample]
-    paths: [tools/art_sample.py, .github/workflows/art-sample.yml]
+    paths: [tools/art_sample.py, tools/species.txt, .github/workflows/art-sample.yml]
 permissions:
   contents: write
 jobs:
@@ -16,4 +16,4 @@ jobs:
       - run: python tools/art_sample.py
       - run: |
           git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
-          git add art-sample && git commit -m "Art sample images" && git push
+          git add art && git commit -m "Bird photo cutouts" && git push
