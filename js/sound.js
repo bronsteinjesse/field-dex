@@ -48,7 +48,7 @@ async function classify(model, samples) {
   return res;
 }
 
-// Live listening session. onUpdate gets { level, spectrum, detections } as it runs.
+// Live listening session. onUpdate gets { spectrum } continuously, and { window: { t, res }, detections } after each 3-second window.
 export async function listen(onUpdate) {
   const stream = await navigator.mediaDevices.getUserMedia({ audio: { echoCancellation: false, noiseSuppression: false, autoGainControl: false } });
   const ctx = new (window.AudioContext || window.webkitAudioContext)();
@@ -61,9 +61,11 @@ export async function listen(onUpdate) {
   const recorded = [];
   const best = new Map();
   const spec = new Uint8Array(analyser.frequencyBinCount);
+  const t0 = ctx.currentTime;
   let model = null;
   loadModel(p => onUpdate({ loading: p })).then(m => { model = m; onUpdate({ loading: 1 }); }).catch(e => onUpdate({ error: e.message }));
 
+  // 3-second windows every 1.5 s. If the phone falls behind, skip ahead to the newest audio so the display stays live.
   proc.onaudioprocess = e => {
     if (stopped) return;
     const d = new Float32Array(e.inputBuffer.getChannelData(0));
@@ -71,14 +73,14 @@ export async function listen(onUpdate) {
     analyser.getByteFrequencyData(spec);
     onUpdate({ spectrum: spec });
     if (pendingLen >= rate * 3 && model && !busy) {
-      const chunk = concat(pending, pendingLen);
-      // keep 1.5 s overlap
+      const all = concat(pending, pendingLen), chunk = all.slice(all.length - rate * 3);
       const keep = Math.floor(rate * 1.5);
       pending = [chunk.slice(chunk.length - keep)]; pendingLen = keep;
+      const t = ctx.currentTime - t0;
       busy = true;
       resample(chunk, rate).then(s => classify(model, s.subarray(0, WIN))).then(res => {
         for (const r of res) if (!best.has(r.sci) || best.get(r.sci).p < r.p) best.set(r.sci, r);
-        onUpdate({ detections: [...best.values()].sort((a, b) => b.p - a.p) });
+        onUpdate({ window: { t, res }, detections: [...best.values()].sort((a, b) => b.p - a.p) });
       }).catch(e => onUpdate({ error: e.message })).finally(() => busy = false);
     }
   };
@@ -89,14 +91,16 @@ export async function listen(onUpdate) {
       proc.disconnect(); src.disconnect();
       stream.getTracks().forEach(t => t.stop());
       // One last pass over the tail if nothing ran yet.
+      let tail = null;
       if (model && best.size === 0 && recorded.length) {
         const all = concat(recorded, recorded.reduce((a, c) => a + c.length, 0));
         const s = await resample(all.slice(-Math.floor(rate * 3)), rate);
-        for (const r of await classify(model, padTo(s, WIN))) best.set(r.sci, r);
+        tail = await classify(model, padTo(s, WIN));
+        for (const r of tail) best.set(r.sci, r);
       }
       const audio = encodeWav(concat(recorded, recorded.reduce((a, c) => a + c.length, 0)), rate);
       ctx.close();
-      return { detections: [...best.values()].sort((a, b) => b.p - a.p), audio };
+      return { detections: [...best.values()].sort((a, b) => b.p - a.p), tail, audio };
     },
   };
 }

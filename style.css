@@ -225,3 +225,10 @@ i.px{-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;m
 .spr .px{width:92%;height:92%}
 .pin .px{width:40px;height:40px}
 .credit{font-size:11px;color:var(--mut);margin-top:10px;line-height:1.4}
+/* Song ID: live list */
+.heardrow{transition:background .3s}
+.heardrow.now{background:rgba(231,194,126,.14);border-radius:6px;box-shadow:inset 3px 0 0 var(--gold)}
+.heardrow.now .rw{color:var(--gold);animation:singblink 1s steps(2) infinite}
+.tl{position:relative;height:6px;margin-top:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
+.tl i{position:absolute;top:0;bottom:0;background:var(--gold);opacity:.85;border-radius:2px}
+@keyframes singblink{50%{opacity:.35}}

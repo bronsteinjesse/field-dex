@@ -8,6 +8,7 @@ import { drawCard } from './card.js';
 import { drawMap } from './map.js';
 import * as forecast from './forecast.js';
 import { SPRITES } from './sprites.js';
+import { makeTracker } from './songid.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -434,11 +435,23 @@ async function startListen() {
     <div class="lab">HEARD SO FAR</div><div id="heard" class="muted">Nothing yet…</div>`);
   const cv = el.querySelector('canvas'), g = cv.getContext('2d');
   g.fillStyle = '#10201a'; g.fillRect(0, 0, cv.width, cv.height);
-  let session = null, stopping = false, cancelled = false, last = [];
+  let session = null, stopping = false, cancelled = false;
   // Cancel works even while the song model is still loading.
   el.querySelector('#backBtn').addEventListener('click', e => { e.stopPropagation(); cancelled = true; el.remove(); session?.stop().catch(() => {}); });
-  const nearSci = () => new Set((state.nearby?.species || []).map(s => s.sci));
-  const filtered = d => { const ns = nearSci(); return d.filter(x => !ns.size || ns.has(x.sci) || x.p > 0.7); };
+  // Location filter: birds reported near you lately, and everything ever recorded in your county (loaded in the background).
+  const windows = [];
+  let county = null, tracker = makeTracker(state.nearby?.species || [], null);
+  const rebuild = () => { tracker = makeTracker(state.nearby?.species || [], county); for (const w of windows) tracker.add(w.t, w.res); };
+  (async () => {
+    await loadNearby().catch(() => {});
+    county = state.nearby?.county ? await api.regionSpecies(state.nearby.county).catch(() => null) : null;
+    rebuild(); draw();
+  })();
+  const draw = () => {
+    const rows = tracker.list(), span = Math.max(15, tracker.latest + 3);
+    el.querySelector('#heard').innerHTML = rows.length ? rows.slice(0, 8).map(b => `<div class="nr heardrow${b.now ? ' now' : ''}"><div class="ic">${icon(b.sci, b.name)}</div><div class="mid"><b>${esc(b.name)}</b>
+      <div class="tl">${b.times.map(t => `<i style="left:${(t / span * 100).toFixed(1)}%;width:${(3 / span * 100).toFixed(1)}%"></i>`).join('')}</div></div><span class="rw">${b.now ? 'SINGING' : Math.round(b.p * 100) + '%'}</span></div>`).join('') : 'Nothing yet…';
+  };
   try {
     session = await sound.listen(u => {
       if (u.spectrum) {
@@ -452,26 +465,25 @@ async function startListen() {
       if (u.loading != null && u.loading < 1) { el.querySelector('#prog').hidden = false; el.querySelector('#prog i').style.width = (u.loading * 100) + '%'; el.querySelector('#load').textContent = 'First time only: downloading the bird-song model (about 50 MB)…'; }
       if (u.loading === 1) { el.querySelector('#prog').hidden = true; el.querySelector('#load').textContent = ''; }
       if (u.error) el.querySelector('#load').textContent = 'Sound ID hit a problem: ' + u.error;
-      if (u.detections) {
-        last = filtered(u.detections);
-        el.querySelector('#heard').innerHTML = last.length ? last.slice(0, 5).map(d => `<div class="nr"><div class="ic">${icon(d.sci, d.name)}</div><div class="mid"><b>${esc(d.name)}</b><div class="bar"><i style="width:${Math.round(d.p * 100)}%"></i></div></div><span class="rw">${Math.round(d.p * 100)}%</span></div>`).join('') : 'Nothing yet…';
-      }
+      if (u.window) { windows.push(u.window); tracker.add(u.window.t, u.window.res); draw(); }
     });
   } catch (e) {
     el.remove(); if (!cancelled) toast('Field Dex needs the microphone to hear birds. Allow it in Settings.'); return;
   }
   if (cancelled) { session.stop().catch(() => {}); return; }
-  el.addEventListener('click', async e => {
+  el.addEventListener('click', async () => {
     if (stopping) return; stopping = true;
     el.querySelector('.tbox').innerHTML = 'THINKING…<small>Checking the recording.</small>';
     const res = await session.stop();
     el.remove();
-    const d = filtered(res.detections);
+    if (res.tail) tracker.add(tracker.latest + 1.5, res.tail);
+    const d = tracker.ranked();
     const audioId = await photos.add(res.audio);
     if (!d.length) { toast('No bird song recognized. Try closer, or tap the ball to describe it.'); return; }
     const cands = d.slice(0, 4).map(x => {
       const n = state.nearby?.species.find(s => s.sci === x.sci);
-      return { sci: x.sci, name: n?.name || x.name, code: n?.code, chance: n?.chance, pct: Math.round(x.p * 100), why: [`song match ${Math.round(x.p * 100)}%`, n ? `reported at ${Math.round(n.chance * 100)}% of spots near you` : 'not reported nearby lately'] };
+      const where = n ? `reported at ${Math.round(n.chance * 100)}% of spots near you` : x.tier === 'county' ? 'recorded in your county, not lately' : x.tier === 'none' ? 'never recorded in your county' : 'not reported nearby lately';
+      return { sci: x.sci, name: n?.name || x.name, code: n?.code, chance: n?.chance, pct: Math.round(x.p * 100), why: [`song match ${Math.round(x.p * 100)}%${x.hits > 1 ? `, heard ${x.hits} times` : ''}`, where] };
     });
     showCandidates(cands, { method: 'sound', audio: audioId });
   });
