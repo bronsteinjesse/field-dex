@@ -2491,33 +2491,33 @@
   "sci": "Ardea alba",
   "taxon": "Ardea alba",
   "name": "Great Egret",
-  "by": "(c) daverowe, some rights reserved (CC BY-NC)",
+  "by": "(c) Jack Leonard, some rights reserved (CC BY-NC)",
   "license": "cc-by-nc",
-  "photo": 56653891
+  "photo": 12406141
  },
  "ardea-alba-1": {
   "sci": "Ardea alba",
   "taxon": "Ardea alba",
   "name": "Great Egret",
-  "by": "(c) Kyle Tansley, some rights reserved (CC BY-NC), uploaded by Kyle Tansley",
+  "by": "(c) 360pixual, some rights reserved (CC BY-NC)",
   "license": "cc-by-nc",
-  "photo": 50369455
+  "photo": 1870681
  },
  "ardea-alba-2": {
   "sci": "Ardea alba",
   "taxon": "Ardea alba",
   "name": "Great Egret",
-  "by": "(c) Mike Baird, some rights reserved (CC BY)",
-  "license": "cc-by",
-  "photo": 359167878
+  "by": "(c) Kyle Tansley, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 50369455
  },
  "ardea-alba-3": {
   "sci": "Ardea alba",
   "taxon": "Ardea alba",
   "name": "Great Egret",
-  "by": "(c) daverowe, some rights reserved (CC BY-NC)",
+  "by": "(c) Jennifer Linde, some rights reserved (CC BY-NC)",
   "license": "cc-by-nc",
-  "photo": 56653803
+  "photo": 19089669
  },
  "calidris-minutilla-0": {
   "sci": "Calidris minutilla",
@@ -4886,5 +4886,53 @@
   "by": "(c) \u041c\u0430\u0440\u0438\u043d\u0430 \u0413\u043e\u0440\u0431\u0443\u043d\u043e\u0432\u0430-\u00cb\u043b\u043a\u0438\u043d\u0430, some rights reserved (CC BY-NC), uploaded by \u041c\u0430\u0440\u0438\u043d\u0430 \u0413\u043e\u0440\u0431\u0443\u043d\u043e\u0432\u0430-\u00cb\u043b\u043a\u0438\u043d\u0430",
   "license": "cc-by-nc",
   "photo": 38789257
+ },
+ "ardea-alba-4": {
+  "sci": "Ardea alba",
+  "taxon": "Ardea alba",
+  "name": "Great Egret",
+  "by": "(c) Jonathan Eisen, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 152261604
+ },
+ "ardea-alba-5": {
+  "sci": "Ardea alba",
+  "taxon": "Ardea alba",
+  "name": "Great Egret",
+  "by": "(c) daverowe, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 56653803
+ },
+ "ardea-alba-6": {
+  "sci": "Ardea alba",
+  "taxon": "Ardea alba",
+  "name": "Great Egret",
+  "by": "(c) ghostangel, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 347231060
+ },
+ "ardea-alba-7": {
+  "sci": "Ardea alba",
+  "taxon": "Ardea alba",
+  "name": "Great Egret",
+  "by": "(c) Guille Ivan Spajic, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 170789420
+ },
+ "ardea-alba-8": {
+  "sci": "Ardea alba",
+  "taxon": "Ardea alba",
+  "name": "Great Egret",
+  "by": "(c) JeffreyGammon, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 170522394
+ },
+ "ardea-alba-9": {
+  "sci": "Ardea alba",
+  "taxon": "Ardea alba",
+  "name": "Great Egret",
+  "by": "(c) Matt and Kaysea Bruce, some rights reserved (CC BY-NC)",
+  "license": "cc-by-nc",
+  "photo": 275473119
  }
 }
