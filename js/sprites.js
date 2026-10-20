@@ -105,7 +105,7 @@ export const SPRITES = {
   "sialia-sialis": "© Dan Vickers (CC BY)",
   "sicalis-flaveola": "© Alejandro  Bayer Tamayo (CC BY-SA)",
   "sitta-carolinensis": "© Bonnie Kinder (CC BY-NC)",
-  "sphyrapicus-varius": "© bwood708, some rights reserved (CC BY-NC)",
+  "sphyrapicus-varius": "© bwood708 (CC BY-NC)",
   "spinus-tristis": "© Chris Fisher (CC BY-NC)",
   "spizella-passerina": "© Terry Woodward (CC BY)",
   "strix-varia": "© David Yeager (CC BY-NC)",
