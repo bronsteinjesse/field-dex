@@ -641,7 +641,8 @@ async function openSettings() {
     <div class="card"><h3>EBIRD KEY</h3><p class="muted">Free from <a href="https://ebird.org/api/keygen" target="_blank" rel="noopener">ebird.org/api/keygen</a>. Stays on this phone.</p>
       <input id="k" value="${esc(key)}" placeholder="Paste your eBird key" autocomplete="off" autocapitalize="off" spellcheck="false"><div style="height:8px"></div><button class="btn full" id="ks">SAVE</button></div>
     <div class="card"><h3>IMPORT A LIFE LIST</h3><p class="muted">On eBird, open My eBird → Life list → Download (CSV). Pick that file here and every species on it is added as caught.</p>
-      <button class="btn full" id="imp">CHOOSE CSV FILE</button></div>
+      <div class="row"><button class="btn" id="paste">PASTE LIST</button><button class="btn alt" id="imp">CHOOSE FILE</button></div>
+      <div id="pasteBox" hidden style="margin-top:8px"><textarea id="pasteIn" rows="4" placeholder="Paste the list here"></textarea><div style="height:8px"></div><button class="btn full" id="pasteGo">IMPORT</button></div></div>
     <div class="card"><h3>BACKUP</h3><p class="muted">Your dex lives only on this phone. Save a backup now and then.</p>
       <div class="row"><button class="btn" id="exp">SAVE BACKUP</button><button class="btn alt" id="res">RESTORE</button></div></div>
     <div class="card"><h3>SOUND ID</h3><p class="muted">The bird-song model downloads the first time you swipe up (about 50 MB), then works offline.</p><button class="btn alt full" id="pre">DOWNLOAD IT NOW</button><div class="prog" id="pp" hidden><i></i></div></div>
@@ -649,7 +650,13 @@ async function openSettings() {
       <p class="muted">LV ${level(state.xp)} · ${state.xp} XP · ${state.catches.length} caught</p></div></div>`, 'solid');
   el.querySelector('[data-x]').onclick = () => el.remove();
   el.querySelector('#ks').onclick = async () => { await kv.set('ebirdKey', el.querySelector('#k').value.trim()); state.nearby = null; toast('Key saved'); render(); };
-  el.querySelector('#imp').onclick = () => pickFile('.csv,text/csv', importCsv);
+  el.querySelector('#imp').onclick = () => pickFile('.csv,.txt,text/csv,text/plain', importCsv);
+  el.querySelector('#paste').onclick = async () => {
+    const box = el.querySelector('#pasteBox'), inp = el.querySelector('#pasteIn');
+    box.hidden = false;
+    try { const t = await navigator.clipboard.readText(); if (t) inp.value = t; } catch { inp.focus(); }
+  };
+  el.querySelector('#pasteGo').onclick = () => { const t = el.querySelector('#pasteIn').value.trim(); if (t) importCsv({ text: async () => t }); };
   el.querySelector('#exp').onclick = exportBackup;
   el.querySelector('#res').onclick = () => pickFile('application/json,.json', restoreBackup);
   el.querySelector('#pre').onclick = () => { const pp = el.querySelector('#pp'); pp.hidden = false; sound.loadModel(p => pp.firstChild.style.width = p * 100 + '%').then(() => toast('Sound ID ready, works offline now')).catch(e => toast('Download failed: ' + e.message)); };
