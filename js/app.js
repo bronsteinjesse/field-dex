@@ -684,13 +684,21 @@ async function importCsv(file) {
   const iSci = head.findIndex(h => h.includes('scientific')), iCom = head.findIndex(h => h.includes('common')), iDate = head.findIndex(h => h === 'date' || h.includes('date'));
   const iLat = head.findIndex(h => h.startsWith('lat')), iLng = head.findIndex(h => h.startsWith('lon') || h === 'lng'), iLoc = head.findIndex(h => h === 'location' || h === 'place');
   if (iSci < 0 || iCom < 0) { toast('That file doesn\'t look like a life list.'); return; }
-  let added = 0;
+  let added = 0, fixed = 0;
+  const sameDay = {};
   for (const r of rows) {
     const sci = r[iSci]?.trim(), name = r[iCom]?.trim();
     if (!sci || !name || sci.includes(' x ') || sci.includes('/') || sci.includes('sp.')) continue;
-    if (await catches.get(sci)) continue;
     const d = iDate >= 0 && r[iDate] ? new Date(r[iDate]) : new Date();
+    // Birds listed on the same day keep the file's order (oldest first), a minute apart.
+    if (!isNaN(d)) { const k = d.toISOString(); d.setMinutes(d.getMinutes() + (sameDay[k] = (sameDay[k] ?? -1) + 1)); }
     const date = isNaN(d) ? new Date().toISOString() : d.toISOString();
+    const had = await catches.get(sci);
+    if (had) {
+      // Importing the list again re-dates birds that only came from an import, so the dex order can be corrected.
+      if (had.sightings.every(x => x.method === 'import') && had.first !== date) { had.first = date; had.sightings[0].date = date; await catches.put(had); fixed++; }
+      continue;
+    }
     const lat = parseFloat(r[iLat]), lng = parseFloat(r[iLng]);
     const sighting = { date, method: 'import', place: iLoc >= 0 ? r[iLoc]?.trim() || null : null };
     if (isFinite(lat) && isFinite(lng)) Object.assign(sighting, { lat, lng });
@@ -698,7 +706,7 @@ async function importCsv(file) {
     added++;
   }
   state.catches = await catches.all(); render();
-  toast(`Imported ${added} birds into your dex`);
+  toast(added || !fixed ? `Imported ${added} birds into your dex` : `Put ${fixed} birds in the order you found them`);
 }
 
 async function exportBackup() {
@@ -799,3 +807,10 @@ async function init() {
   if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
 }
 init();
+
+// Tapping the top edge of the screen scrolls the current page back to the top, like iOS apps do.
+document.getElementById('toTop').onclick = () => {
+  const ov = [...document.querySelectorAll('#layer .ov')].pop();
+  const box = ov ? ov.querySelector('.scroll') || ov : document.getElementById('view');
+  box.scrollTo({ top: 0, behavior: 'smooth' });
+};
