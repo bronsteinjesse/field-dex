@@ -113,8 +113,9 @@ async function updateRegionLine(list) {
       const [sp, name] = await Promise.all([api.regionSpecies(code), api.regionName(code)]);
       if (!sp.length) continue;
       const have = sp.filter(s => caughtSci.has(s.sci)).length;
-      parts.push(`<span>${esc(name.split(',')[0])} <b>${have}/${sp.length}</b> · ${Math.round(100 * have / sp.length)}%</span>`);
-      plain.push(`${name.split(',')[0]} ${have}/${sp.length}`);
+      const label = name.split(',')[0] + (code.split('-').length === 3 ? ' Co.' : ' State');
+      parts.push(`<span>${esc(label)} <b>${have}/${sp.length}</b> · ${Math.round(100 * have / sp.length)}%</span>`);
+      plain.push(`${label} ${have}/${sp.length}`);
     }
     state.region = { line: parts.join(''), text: plain[0] };
     const el = $('#regionLine'); if (el && state.tab === 'dex') el.innerHTML = state.region.line;
@@ -765,8 +766,9 @@ function bindSwipeBack() {
 function fitScreen() {
   const standalone = navigator.standalone || matchMedia('(display-mode: standalone)').matches;
   document.documentElement.classList.toggle('standalone', !!standalone);
-  if (standalone) document.documentElement.style.setProperty('--full', Math.max(screen.height, innerHeight) + 'px');
+  if (standalone) document.documentElement.style.setProperty('--full', Math.max(screen.height, innerHeight, document.documentElement.clientHeight) + 'px');
 }
+addEventListener('resize', fitScreen); addEventListener('pageshow', fitScreen);
 
 async function init() {
   fitScreen();
