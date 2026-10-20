@@ -84,6 +84,8 @@ const BADGES = [
   ['RARE', c => c.filter(x => x.rare).length, 1],
 ];
 
+const earned = list => BADGES.filter(([, f, need]) => f(list) >= need).map(([n]) => n);
+
 async function renderDex() {
   const list = [...state.catches].sort((a, b) => a.first.localeCompare(b.first));
   const v = $('#view');
@@ -92,7 +94,6 @@ async function renderDex() {
     <div class="hdr"><div class="ttl">DEX</div><div class="ctr"><span>LV <b>${level(state.xp)}</b></span><span class="mini">${ballSvg()} <b>${list.length}</b></span></div></div>
     <div class="sub" id="regionLine">${region.line || ''}</div>
     <div class="tools"><button id="cardBtn">TRAINER CARD</button><button id="mapBtn">CATCH MAP</button></div>
-    <div class="badges">${BADGES.map(([n, f, need]) => { const h = f(list); return `<span class="badge ${h >= need ? 'on' : ''}">${n} ${Math.min(h, need)}/${need}</span>`; }).join('')}</div>
     ${list.length ? `<div class="grid">${list.map((c, i) => `
       <button class="t" data-sci="${esc(c.sci)}"><div class="fig">${c.rare ? '<span class="shiny">✦</span>' : ''}${icon(c.sci, c.name)}<i class="gs"></i></div>
       <div class="no">No.${pad3(i + 1)}</div><div class="nm">${esc(c.name)}</div></button>`).join('')}</div>`
@@ -550,7 +551,7 @@ function gotcha(c, ctx, forced = false) {
     el.querySelector('#sc').classList.add('won');
     const res = await saveCatch(c, ctx);
     msg.innerHTML = `Gotcha! ${esc(c.name)} was caught!`;
-    el.querySelector('#after').innerHTML = `<div class="reg">${icon(c.sci, c.name)}<div><b>${res.isNew ? `No.${pad3(res.no)} registered` : `Seen again · ${res.count}×`}</b><small>+${res.xp} XP · ${res.tier}${res.levelUp ? ` · LEVEL UP! LV ${res.level}` : ''}<br>${ctx.photo ? 'Your photo was saved to its Photos tab.' : ctx.audio ? 'Your recording was saved to its Song tab.' : ''}</small></div></div>
+    el.querySelector('#after').innerHTML = `<div class="reg">${icon(c.sci, c.name)}<div><b>${res.isNew ? `No.${pad3(res.no)} registered` : `Seen again · ${res.count}×`}</b><small>+${res.xp} XP · ${res.tier}${res.levelUp ? ` · LEVEL UP! LV ${res.level}` : ''}${res.badge ? `<br>${res.badge} BADGE EARNED! See it on your trainer card.` : ''}<br>${ctx.photo ? 'Your photo was saved to its Photos tab.' : ctx.audio ? 'Your recording was saved to its Song tab.' : ''}</small></div></div>
       <div class="capfoot" style="margin-top:12px"><div class="row"><button class="btn" id="viewEntry">VIEW ENTRY</button><button class="btn alt" id="ok">DONE</button></div></div>`;
     el.querySelector('#viewEntry').onclick = () => { el.remove(); openBird(c.sci, c.name); };
     el.querySelector('#ok').onclick = () => el.remove();
@@ -569,12 +570,13 @@ async function saveCatch(c, ctx) {
   else rec = { sci: c.sci, name: c.name, code: c.code || state.nearby?.species.find(s => s.sci === c.sci)?.code || null, first: sighting.date, count: 1, sightings: [sighting], hab: habitatOf(c.sci, c.name), rare: !!tier.rare };
   await catches.put(rec);
   const gain = isNew ? tier.xp : Math.round(tier.xp / 4);
-  const before = level(state.xp);
+  const before = level(state.xp), had = earned(state.catches);
   state.xp += gain; await kv.set('xp', state.xp);
   state.catches = await catches.all();
   const no = [...state.catches].sort((a, b) => a.first.localeCompare(b.first)).findIndex(x => x.sci === c.sci) + 1;
   render();
-  return { isNew, no, count: rec.count, xp: gain, tier: tier.name, level: level(state.xp), levelUp: level(state.xp) > before };
+  const badge = earned(state.catches).find(b => !had.includes(b));
+  return { isNew, no, count: rec.count, xp: gain, tier: tier.name, level: level(state.xp), levelUp: level(state.xp) > before, badge };
 }
 
 /* ---------- TRAINER CARD ---------- */
