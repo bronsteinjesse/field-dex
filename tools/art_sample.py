@@ -39,5 +39,7 @@ for sci in BIRDS:
         n += 1
     print(sci, n, flush=True)
   except Exception as e:
+    import traceback
     print(sci, "FAILED", e, flush=True)
+    open(f"{OUT}/errors.txt", "a").write(f"{sci}: {traceback.format_exc()}\n")
 json.dump(credits, open(f"{OUT}/credits.json", "w"), indent=1)
