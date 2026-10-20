@@ -1,0 +1,1871 @@
+{
+"spinus-psaltria-0": {
+"sci": "Spinus psaltria",
+"name": "Lesser Goldfinch",
+"by": "(c) chestersimpson, some rights reserved (CC BY-NC), uploaded by chestersimpson",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"spinus-psaltria-1": {
+"sci": "Spinus psaltria",
+"name": "Lesser Goldfinch",
+"by": "(c) David J Barton, some rights reserved (CC BY-NC), uploaded by David J Barton",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"spinus-psaltria-2": {
+"sci": "Spinus psaltria",
+"name": "Lesser Goldfinch",
+"by": "(c) Jeremy Gatten, some rights reserved (CC BY-NC), uploaded by Jeremy Gatten",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"nyctanassa-violacea-0": {
+"sci": "Nyctanassa violacea",
+"name": "Yellow-crowned Night Heron",
+"by": "(c) Roberto Gonz\u00e1lez, some rights reserved (CC BY-NC), uploaded by Roberto Gonz\u00e1lez",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"nyctanassa-violacea-1": {
+"sci": "Nyctanassa violacea",
+"name": "Yellow-crowned Night Heron",
+"by": "(c) Linda, some rights reserved (CC BY-NC), uploaded by Linda",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"nyctanassa-violacea-2": {
+"sci": "Nyctanassa violacea",
+"name": "Yellow-crowned Night Heron",
+"by": "(c) Thijs Valkenburg, some rights reserved (CC BY-NC), uploaded by Thijs Valkenburg",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"pyrocephalus-rubinus-0": {
+"sci": "Pyrocephalus rubinus",
+"name": "Vermilion Flycatcher",
+"by": "(c) photogo, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"pyrocephalus-rubinus-1": {
+"sci": "Pyrocephalus rubinus",
+"name": "Vermilion Flycatcher",
+"by": "(c) James Bailey, some rights reserved (CC BY-NC), uploaded by James Bailey",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"pyrocephalus-rubinus-2": {
+"sci": "Pyrocephalus rubinus",
+"name": "Vermilion Flycatcher",
+"by": "(c) davy, some rights reserved (CC BY-NC), uploaded by davy",
+"license": "cc-by-nc",
+"score": 3.28
+},
+"spatula-discors-0": {
+"sci": "Spatula discors",
+"name": "Blue-winged Teal",
+"by": "(c) bwood708, some rights reserved (CC BY-NC), uploaded by bwood708",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"spatula-discors-1": {
+"sci": "Spatula discors",
+"name": "Blue-winged Teal",
+"by": "(c) Ed O'Connor, some rights reserved (CC BY-NC), uploaded by Ed O'Connor",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"spatula-discors-2": {
+"sci": "Spatula discors",
+"name": "Blue-winged Teal",
+"by": "(c) gregslak, some rights reserved (CC BY-NC), uploaded by gregslak",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"polioptila-caerulea-0": {
+"sci": "Polioptila caerulea",
+"name": "Blue-gray Gnatcatcher",
+"by": "(c) Edward Perry IV, some rights reserved (CC BY-NC), uploaded by Edward Perry IV",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"polioptila-caerulea-1": {
+"sci": "Polioptila caerulea",
+"name": "Blue-gray Gnatcatcher",
+"by": "(c) Jerry Oldenettel, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"polioptila-caerulea-2": {
+"sci": "Polioptila caerulea",
+"name": "Blue-gray Gnatcatcher",
+"by": "(c) Gonzalo Zepeda Mart\u00ednez, some rights reserved (CC BY-SA), uploaded by Gonzalo Zepeda Mart\u00ednez",
+"license": "cc-by-sa",
+"score": 3.28
+},
+"thryomanes-bewickii-0": {
+"sci": "Thryomanes bewickii",
+"name": "Bewick's Wren",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"thryomanes-bewickii-1": {
+"sci": "Thryomanes bewickii",
+"name": "Bewick's Wren",
+"by": "(c) Ross Millikan, some rights reserved (CC BY-NC), uploaded by Ross Millikan",
+"license": "cc-by-nc",
+"score": 3.28
+},
+"thryomanes-bewickii-2": {
+"sci": "Thryomanes bewickii",
+"name": "Bewick's Wren",
+"by": "(c) Daniel Alexander Carrillo Mtz, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"mergus-serrator-0": {
+"sci": "Mergus serrator",
+"name": "Red-breasted Merganser",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"mergus-serrator-1": {
+"sci": "Mergus serrator",
+"name": "Red-breasted Merganser",
+"by": "(c) Lucas liu, some rights reserved (CC BY-NC), uploaded by Lucas liu",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"mergus-serrator-2": {
+"sci": "Mergus serrator",
+"name": "Red-breasted Merganser",
+"by": "(c) brian stahls, some rights reserved (CC BY-NC), uploaded by brian stahls",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"melospiza-lincolnii-0": {
+"sci": "Melospiza lincolnii",
+"name": "Lincoln's Sparrow",
+"by": "(c) joannerusso, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"melospiza-lincolnii-1": {
+"sci": "Melospiza lincolnii",
+"name": "Lincoln's Sparrow",
+"by": "(c) joannerusso, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"melospiza-lincolnii-2": {
+"sci": "Melospiza lincolnii",
+"name": "Lincoln's Sparrow",
+"by": "(c) Linda Jo Conn, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"piranga-ludoviciana-0": {
+"sci": "Piranga ludoviciana",
+"name": "Western Tanager",
+"by": "(c) Andrej Chud\u00fd, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"piranga-ludoviciana-1": {
+"sci": "Piranga ludoviciana",
+"name": "Western Tanager",
+"by": "(c) Jim Gain, some rights reserved (CC BY-NC), uploaded by Jim Gain",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"piranga-ludoviciana-2": {
+"sci": "Piranga ludoviciana",
+"name": "Western Tanager",
+"by": "(c) BJ Stacey, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.88
+},
+"petrochelidon-pyrrhonota-0": {
+"sci": "Petrochelidon pyrrhonota",
+"name": "Cliff Swallow",
+"by": "(c) brodiaea_max, some rights reserved (CC BY-NC), uploaded by brodiaea_max",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"petrochelidon-pyrrhonota-1": {
+"sci": "Petrochelidon pyrrhonota",
+"name": "Cliff Swallow",
+"by": "(c) Kent Ross, some rights reserved (CC BY-NC), uploaded by Kent Ross",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"petrochelidon-pyrrhonota-2": {
+"sci": "Petrochelidon pyrrhonota",
+"name": "Cliff Swallow",
+"by": "(c) Xochitl Zambrano, some rights reserved (CC BY), uploaded by Xochitl Zambrano",
+"license": "cc-by",
+"score": 2.6
+},
+"tyrannus-vociferans-0": {
+"sci": "Tyrannus vociferans",
+"name": "Cassin's Kingbird",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"tyrannus-vociferans-1": {
+"sci": "Tyrannus vociferans",
+"name": "Cassin's Kingbird",
+"by": "(c) bj worth, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"tyrannus-vociferans-2": {
+"sci": "Tyrannus vociferans",
+"name": "Cassin's Kingbird",
+"by": "(c) Ana Adel\u00edz Rasc\u00f3n Mendoza, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"spatula-cyanoptera-0": {
+"sci": "Spatula cyanoptera",
+"name": "Cinnamon Teal",
+"by": "(c) Peter Chen 2.0, some rights reserved (CC BY), uploaded by Peter Chen 2.0",
+"license": "cc-by",
+"score": 3.3
+},
+"spatula-cyanoptera-1": {
+"sci": "Spatula cyanoptera",
+"name": "Cinnamon Teal",
+"by": "(c) Ad Konings, some rights reserved (CC BY-NC), uploaded by Ad Konings",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"spatula-cyanoptera-2": {
+"sci": "Spatula cyanoptera",
+"name": "Cinnamon Teal",
+"by": "(c) dlbowls, some rights reserved (CC BY-NC), uploaded by dlbowls",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"numenius-hudsonicus-0": {
+"sci": "Numenius hudsonicus",
+"name": "Hudsonian Whimbrel",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC), uploaded by Paul Cools",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"numenius-hudsonicus-1": {
+"sci": "Numenius hudsonicus",
+"name": "Hudsonian Whimbrel",
+"by": "(c) Steven Mlodinow, some rights reserved (CC BY-NC), uploaded by Steven Mlodinow",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"numenius-hudsonicus-2": {
+"sci": "Numenius hudsonicus",
+"name": "Hudsonian Whimbrel",
+"by": "(c) Andrea Kreuzhage, some rights reserved (CC BY-NC), uploaded by Andrea Kreuzhage",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"xanthocephalus-xanthocephalus-0": {
+"sci": "Xanthocephalus xanthocephalus",
+"name": "Yellow-headed Blackbird",
+"by": "(c) jim22lawrence, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"xanthocephalus-xanthocephalus-1": {
+"sci": "Xanthocephalus xanthocephalus",
+"name": "Yellow-headed Blackbird",
+"by": "(c) Daughter Dad, some rights reserved (CC BY), uploaded by Daughter Dad",
+"license": "cc-by",
+"score": 3.3
+},
+"xanthocephalus-xanthocephalus-2": {
+"sci": "Xanthocephalus xanthocephalus",
+"name": "Yellow-headed Blackbird",
+"by": "(c) Matt Goff, some rights reserved (CC BY-NC-SA), uploaded by Matt Goff",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"vireo-griseus-0": {
+"sci": "Vireo griseus",
+"name": "White-eyed Vireo",
+"by": "(c) Jos\u00e9 Antonio Linage Espinosa, some rights reserved (CC BY-NC), uploaded by Jos\u00e9 Antonio Linage Espinosa",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"vireo-griseus-1": {
+"sci": "Vireo griseus",
+"name": "White-eyed Vireo",
+"by": "(c) bwood708, some rights reserved (CC BY-NC), uploaded by bwood708",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"vireo-griseus-2": {
+"sci": "Vireo griseus",
+"name": "White-eyed Vireo",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"anthus-rubescens-0": {
+"sci": "Anthus rubescens",
+"name": "American Pipit",
+"by": "(c) Fyn Kynd, some rights reserved (CC BY-SA), uploaded by Fyn Kynd",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"anthus-rubescens-1": {
+"sci": "Anthus rubescens",
+"name": "American Pipit",
+"by": "(c) BJ Stacey, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"anthus-rubescens-2": {
+"sci": "Anthus rubescens",
+"name": "American Pipit",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"sialia-currucoides-0": {
+"sci": "Sialia currucoides",
+"name": "Mountain Bluebird",
+"by": "(c) christrent, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"sialia-currucoides-1": {
+"sci": "Sialia currucoides",
+"name": "Mountain Bluebird",
+"by": "(c) gregslak, some rights reserved (CC BY-NC), uploaded by gregslak",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"sialia-currucoides-2": {
+"sci": "Sialia currucoides",
+"name": "Mountain Bluebird",
+"by": "(c) Chuck Gates, some rights reserved (CC BY-NC), uploaded by Chuck Gates",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"clangula-hyemalis-0": {
+"sci": "Clangula hyemalis",
+"name": "Long-tailed Duck",
+"by": "(c) Kristen Rose, some rights reserved (CC BY-NC), uploaded by Kristen Rose",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"clangula-hyemalis-1": {
+"sci": "Clangula hyemalis",
+"name": "Long-tailed Duck",
+"by": "(c) clicque, some rights reserved (CC BY-NC), uploaded by clicque",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"clangula-hyemalis-2": {
+"sci": "Clangula hyemalis",
+"name": "Long-tailed Duck",
+"by": "(c) brian stahls, some rights reserved (CC BY-NC), uploaded by brian stahls",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"crotophaga-sulcirostris-0": {
+"sci": "Crotophaga sulcirostris",
+"name": "Groove-billed Ani",
+"by": "(c) Juan Manuel Carmona, some rights reserved (CC BY-NC), uploaded by Juan Manuel Carmona",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"crotophaga-sulcirostris-1": {
+"sci": "Crotophaga sulcirostris",
+"name": "Groove-billed Ani",
+"by": "(c) ColinDJones, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"crotophaga-sulcirostris-2": {
+"sci": "Crotophaga sulcirostris",
+"name": "Groove-billed Ani",
+"by": "(c) Juan Manuel Carmona, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"vireo-solitarius-0": {
+"sci": "Vireo solitarius",
+"name": "Blue-headed Vireo",
+"by": "(c) Ken Janes, some rights reserved (CC BY-NC), uploaded by Ken Janes",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"vireo-solitarius-1": {
+"sci": "Vireo solitarius",
+"name": "Blue-headed Vireo",
+"by": "(c) Bert Filemyr, some rights reserved (CC BY-NC), uploaded by Bert Filemyr",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"vireo-solitarius-2": {
+"sci": "Vireo solitarius",
+"name": "Blue-headed Vireo",
+"by": "(c) Elvis Jimenez, some rights reserved (CC BY-NC), uploaded by Elvis Jimenez",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"patagioenas-fasciata-0": {
+"sci": "Patagioenas fasciata",
+"name": "Band-tailed Pigeon",
+"by": "(c) Esteban Poveda, some rights reserved (CC BY), uploaded by Esteban Poveda",
+"license": "cc-by",
+"score": 3.3
+},
+"patagioenas-fasciata-1": {
+"sci": "Patagioenas fasciata",
+"name": "Band-tailed Pigeon",
+"by": "(c) Donna Pomeroy, some rights reserved (CC BY-NC), uploaded by Donna Pomeroy",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"patagioenas-fasciata-2": {
+"sci": "Patagioenas fasciata",
+"name": "Band-tailed Pigeon",
+"by": "(c) Paul Fenwick, some rights reserved (CC BY-NC), uploaded by Paul Fenwick",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"spizella-pallida-0": {
+"sci": "Spizella pallida",
+"name": "Clay-colored Sparrow",
+"by": "(c) Javi Gonzalez, some rights reserved (CC BY-NC), uploaded by Javi Gonzalez",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"spizella-pallida-1": {
+"sci": "Spizella pallida",
+"name": "Clay-colored Sparrow",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"spizella-pallida-2": {
+"sci": "Spizella pallida",
+"name": "Clay-colored Sparrow",
+"by": "(c) Jose Hugo Mart\u00ednez Guerrero, some rights reserved (CC BY-NC), uploaded by Jose Hugo Mart\u00ednez Guerrero",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"sternula-antillarum-0": {
+"sci": "Sternula antillarum",
+"name": "Least Tern",
+"by": "(c) Jos\u00e9 Antonio Linage Espinosa, some rights reserved (CC BY-NC), uploaded by Jos\u00e9 Antonio Linage Espinosa",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"sternula-antillarum-1": {
+"sci": "Sternula antillarum",
+"name": "Least Tern",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"sternula-antillarum-2": {
+"sci": "Sternula antillarum",
+"name": "Least Tern",
+"by": "(c) Adalberto Gonz\u00e1lez, some rights reserved (CC BY-NC), uploaded by Adalberto Gonz\u00e1lez",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"icteria-virens-0": {
+"sci": "Icteria virens",
+"name": "Yellow-breasted Chat",
+"by": "(c) Todd Dixon, some rights reserved (CC BY-NC), uploaded by Todd Dixon",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"icteria-virens-1": {
+"sci": "Icteria virens",
+"name": "Yellow-breasted Chat",
+"by": "(c) Ad Konings, some rights reserved (CC BY-NC), uploaded by Ad Konings",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"icteria-virens-2": {
+"sci": "Icteria virens",
+"name": "Yellow-breasted Chat",
+"by": "(c) TVASQUEZ, some rights reserved (CC BY-NC), uploaded by TVASQUEZ",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"bucephala-islandica-0": {
+"sci": "Bucephala islandica",
+"name": "Barrow's Goldeneye",
+"by": "(c) John D Reynolds, some rights reserved (CC BY-NC), uploaded by John D Reynolds",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"bucephala-islandica-1": {
+"sci": "Bucephala islandica",
+"name": "Barrow's Goldeneye",
+"by": "(c) Matt Goff, some rights reserved (CC BY-NC-SA), uploaded by Matt Goff",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"bucephala-islandica-2": {
+"sci": "Bucephala islandica",
+"name": "Barrow's Goldeneye",
+"by": "(c) Steven McGrath, some rights reserved (CC BY-NC), uploaded by Steven McGrath",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"leucophaeus-pipixcan-0": {
+"sci": "Leucophaeus pipixcan",
+"name": "Franklin's Gull",
+"by": "(c) georg32sea, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"leucophaeus-pipixcan-1": {
+"sci": "Leucophaeus pipixcan",
+"name": "Franklin's Gull",
+"by": "(c) brian stahls, some rights reserved (CC BY-NC), uploaded by brian stahls",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"leucophaeus-pipixcan-2": {
+"sci": "Leucophaeus pipixcan",
+"name": "Franklin's Gull",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"larus-glaucoides-0": {
+"sci": "Larus glaucoides",
+"name": "Iceland Gull",
+"by": "(c) David McCorquodale, some rights reserved (CC BY-NC), uploaded by David McCorquodale",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"larus-glaucoides-1": {
+"sci": "Larus glaucoides",
+"name": "Iceland Gull",
+"by": "(c) David McCorquodale, some rights reserved (CC BY-NC), uploaded by David McCorquodale",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"larus-glaucoides-2": {
+"sci": "Larus glaucoides",
+"name": "Iceland Gull",
+"by": "(c) David McCorquodale, some rights reserved (CC BY-NC), uploaded by David McCorquodale",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"icterus-gularis-0": {
+"sci": "Icterus gularis",
+"name": "Altamira Oriole",
+"by": "(c) Bill Bouton, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"icterus-gularis-1": {
+"sci": "Icterus gularis",
+"name": "Altamira Oriole",
+"by": "(c) Francesco Veronesi, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 2.7
+},
+"icterus-gularis-2": {
+"sci": "Icterus gularis",
+"name": "Altamira Oriole",
+"by": "(c) Larry Meade, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 2.29
+},
+"sporophila-torqueola-0": {
+"sci": "Sporophila torqueola",
+"name": "Cinnamon-rumped Seedeater",
+"by": "(c) Gera Guzman, some rights reserved (CC BY-NC), uploaded by Gera Guzman",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"sporophila-torqueola-1": {
+"sci": "Sporophila torqueola",
+"name": "Cinnamon-rumped Seedeater",
+"by": "(c) Abram Fleishman, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.29
+},
+"sporophila-torqueola-2": {
+"sci": "Sporophila torqueola",
+"name": "Cinnamon-rumped Seedeater",
+"by": "(c) Jorge A. P\u00e9rez Torres, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.28
+},
+"eumomota-superciliosa-0": {
+"sci": "Eumomota superciliosa",
+"name": "Turquoise-browed Motmot",
+"by": "(c) Jos\u00e9 Antonio Linage Espinosa, some rights reserved (CC BY-NC), uploaded by Jos\u00e9 Antonio Linage Espinosa",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"eumomota-superciliosa-1": {
+"sci": "Eumomota superciliosa",
+"name": "Turquoise-browed Motmot",
+"by": "(c) Alberto G. Nadal, some rights reserved (CC BY-NC), uploaded by Alberto G. Nadal",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"eumomota-superciliosa-2": {
+"sci": "Eumomota superciliosa",
+"name": "Turquoise-browed Motmot",
+"by": "(c) Jos\u00e9 Antonio Linage Espinosa, some rights reserved (CC BY-NC), uploaded by Jos\u00e9 Antonio Linage Espinosa",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"aimophila-ruficeps-0": {
+"sci": "Aimophila ruficeps",
+"name": "Rufous-crowned Sparrow",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"aimophila-ruficeps-1": {
+"sci": "Aimophila ruficeps",
+"name": "Rufous-crowned Sparrow",
+"by": "(c) BJ Stacey, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"aimophila-ruficeps-2": {
+"sci": "Aimophila ruficeps",
+"name": "Rufous-crowned Sparrow",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.22
+},
+"melanitta-americana-0": {
+"sci": "Melanitta americana",
+"name": "Black Scoter",
+"by": "(c) Greg Lasley, some rights reserved (CC BY-NC), uploaded by Greg Lasley",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"melanitta-americana-1": {
+"sci": "Melanitta americana",
+"name": "Black Scoter",
+"by": "(c) Allison Zhang, some rights reserved (CC BY-NC), uploaded by Allison Zhang",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"melanitta-americana-2": {
+"sci": "Melanitta americana",
+"name": "Black Scoter",
+"by": "(c) Bjoern Rost, some rights reserved (CC BY), uploaded by Bjoern Rost",
+"license": "cc-by",
+"score": 3.0
+},
+"cyanocorax-morio-0": {
+"sci": "Cyanocorax morio",
+"name": "Brown Jay",
+"by": "(c) Dominic Sherony, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"cyanocorax-morio-1": {
+"sci": "Cyanocorax morio",
+"name": "Brown Jay",
+"by": "(c) Cheryl Rosenfeld, some rights reserved (CC BY-NC), uploaded by Cheryl Rosenfeld",
+"license": "cc-by-nc",
+"score": 3.22
+},
+"cyanocorax-morio-2": {
+"sci": "Cyanocorax morio",
+"name": "Brown Jay",
+"by": "(c) Dick Culbert, some rights reserved (CC BY)",
+"license": "cc-by",
+"score": 2.7
+},
+"amazilia-rutila-0": {
+"sci": "Amazilia rutila",
+"name": "Cinnamon Hummingbird",
+"by": "(c) Manuel de Jes\u00fas Hern\u00e1ndez Ancheita, some rights reserved (CC BY-NC-SA), uploaded by Manuel de Jes\u00fas Hern\u00e1ndez Ancheita",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"amazilia-rutila-1": {
+"sci": "Amazilia rutila",
+"name": "Cinnamon Hummingbird",
+"by": "(c) Marco Polo amarillas vargas, some rights reserved (CC BY-NC), uploaded by Marco Polo amarillas vargas",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"amazilia-rutila-2": {
+"sci": "Amazilia rutila",
+"name": "Cinnamon Hummingbird",
+"by": "(c) johnmeikle, some rights reserved (CC BY-NC), uploaded by johnmeikle",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"piaya-cayana-0": {
+"sci": "Piaya cayana",
+"name": "Common Squirrel-Cuckoo",
+"by": "(c) Roberto Gonz\u00e1lez, some rights reserved (CC BY-NC), uploaded by Roberto Gonz\u00e1lez",
+"license": "cc-by-nc",
+"score": 2.4
+},
+"piaya-cayana-1": {
+"sci": "Piaya cayana",
+"name": "Common Squirrel-Cuckoo",
+"by": "(c) abelardomendesjr, some rights reserved (CC BY-NC), uploaded by abelardomendesjr",
+"license": "cc-by-nc",
+"score": 2.22
+},
+"piaya-cayana-2": {
+"sci": "Piaya cayana",
+"name": "Common Squirrel-Cuckoo",
+"by": "(c) Karlo Soto, some rights reserved (CC BY-NC), uploaded by Karlo Soto",
+"license": "cc-by-nc",
+"score": 2.0
+},
+"megascops-kennicottii-0": {
+"sci": "Megascops kennicottii",
+"name": "Western Screech-Owl",
+"by": "(c) Kayla Echols, some rights reserved (CC BY-NC), uploaded by Kayla Echols",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"megascops-kennicottii-1": {
+"sci": "Megascops kennicottii",
+"name": "Western Screech-Owl",
+"by": "(c) Eduardo Fern\u00e1ndez Reza, some rights reserved (CC BY-NC), uploaded by Eduardo Fern\u00e1ndez Reza",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"megascops-kennicottii-2": {
+"sci": "Megascops kennicottii",
+"name": "Western Screech-Owl",
+"by": "(c) Osiel Flores, some rights reserved (CC BY-NC), uploaded by Osiel Flores",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"volatinia-jacarina-0": {
+"sci": "Volatinia jacarina",
+"name": "Blue-black Grassquit",
+"by": "(c) Wagner Machado Carlos Lemes, some rights reserved (CC BY)",
+"license": "cc-by",
+"score": 3.3
+},
+"volatinia-jacarina-1": {
+"sci": "Volatinia jacarina",
+"name": "Blue-black Grassquit",
+"by": "(c) Gonzalo Zepeda Mart\u00ednez, some rights reserved (CC BY-SA), uploaded by Gonzalo Zepeda Mart\u00ednez",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"volatinia-jacarina-2": {
+"sci": "Volatinia jacarina",
+"name": "Blue-black Grassquit",
+"by": "(c) Dario Sanches, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"melozone-aberti-0": {
+"sci": "Melozone aberti",
+"name": "Abert's Towhee",
+"by": "(c) Bridget Spencer, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"melozone-aberti-1": {
+"sci": "Melozone aberti",
+"name": "Abert's Towhee",
+"by": "(c) BJ Stacey, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"melozone-aberti-2": {
+"sci": "Melozone aberti",
+"name": "Abert's Towhee",
+"by": "(c) Robin Gwen Agarwal, some rights reserved (CC BY-NC), uploaded by Robin Gwen Agarwal",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"contopus-pertinax-0": {
+"sci": "Contopus pertinax",
+"name": "Greater Pewee",
+"by": "(c) Jorge A. P\u00e9rez Torres, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"contopus-pertinax-1": {
+"sci": "Contopus pertinax",
+"name": "Greater Pewee",
+"by": "(c) Secretar\u00eda de Medio Ambiente y Ordenamiento Territorial, some rights reserved (CC BY-NC), uploaded by Secretar\u00eda de Medio Ambiente y Ordenamiento Territorial",
+"license": "cc-by-nc",
+"score": 2.98
+},
+"contopus-pertinax-2": {
+"sci": "Contopus pertinax",
+"name": "Greater Pewee",
+"by": "(c) Secretar\u00eda de Medio Ambiente y Ordenamiento Territorial, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.98
+},
+"eupsittula-canicularis-0": {
+"sci": "Eupsittula canicularis",
+"name": "Orange-fronted Parakeet",
+"by": "(c) huizar77, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"eupsittula-canicularis-1": {
+"sci": "Eupsittula canicularis",
+"name": "Orange-fronted Parakeet",
+"by": "(c) Antonio Robles, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.0
+},
+"eupsittula-canicularis-2": {
+"sci": "Eupsittula canicularis",
+"name": "Orange-fronted Parakeet",
+"by": "(c) Mexfant Maravilloso, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.55
+},
+"loxia-leucoptera-0": {
+"sci": "Loxia leucoptera",
+"name": "White-winged Crossbill",
+"by": "(c) Philippe H\u00e9nault, some rights reserved (CC BY-NC), uploaded by Philippe H\u00e9nault",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"loxia-leucoptera-1": {
+"sci": "Loxia leucoptera",
+"name": "White-winged Crossbill",
+"by": "(c) Aaron Maizlish, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"loxia-leucoptera-2": {
+"sci": "Loxia leucoptera",
+"name": "White-winged Crossbill",
+"by": "(c) \u0414\u043c\u0438\u0442\u0440\u0438\u0439 \u041e\u0441\u0438\u043f\u043e\u0432, some rights reserved (CC BY-NC), uploaded by \u0414\u043c\u0438\u0442\u0440\u0438\u0439 \u041e\u0441\u0438\u043f\u043e\u0432",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"eupsittula-nana-0": {
+"sci": "Eupsittula nana",
+"name": "Olive-throated Parakeet",
+"by": "(c) Giff Beaton, some rights reserved (CC BY-NC), uploaded by Giff Beaton",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"eupsittula-nana-1": {
+"sci": "Eupsittula nana",
+"name": "Olive-throated Parakeet",
+"by": "(c) Pedro Genaro Rodriguez, some rights reserved (CC BY-NC), uploaded by Pedro Genaro Rodriguez",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"eupsittula-nana-2": {
+"sci": "Eupsittula nana",
+"name": "Olive-throated Parakeet",
+"by": "(c) Ram\u00f3n Trinchan, some rights reserved (CC BY-NC), uploaded by Ram\u00f3n Trinchan",
+"license": "cc-by-nc",
+"score": 2.5
+},
+"troglodytes-musculus-0": {
+"sci": "Troglodytes musculus",
+"name": "Southern House Wren",
+"by": "(c) Juliano Marques, some rights reserved (CC BY-NC), uploaded by Juliano Marques",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"troglodytes-musculus-1": {
+"sci": "Troglodytes musculus",
+"name": "Southern House Wren",
+"by": "(c) taopina, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"troglodytes-musculus-2": {
+"sci": "Troglodytes musculus",
+"name": "Southern House Wren",
+"by": "(c) Jim Greulich, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"myiarchus-tuberculifer-0": {
+"sci": "Myiarchus tuberculifer",
+"name": "Dusky-capped Flycatcher",
+"by": "(c) Tracey Prothro, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"myiarchus-tuberculifer-1": {
+"sci": "Myiarchus tuberculifer",
+"name": "Dusky-capped Flycatcher",
+"by": "(c) Manuel Raab, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.18
+},
+"myiarchus-tuberculifer-2": {
+"sci": "Myiarchus tuberculifer",
+"name": "Dusky-capped Flycatcher",
+"by": "(c) David Bygott, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.62
+},
+"pharomachrus-mocinno-0": {
+"sci": "Pharomachrus mocinno",
+"name": "Resplendent Quetzal",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC), uploaded by Paul Cools",
+"license": "cc-by-nc",
+"score": 2.4
+},
+"pharomachrus-mocinno-1": {
+"sci": "Pharomachrus mocinno",
+"name": "Resplendent Quetzal",
+"by": "(c) Ad Konings, some rights reserved (CC BY-NC), uploaded by Ad Konings",
+"license": "cc-by-nc",
+"score": 1.99
+},
+"pharomachrus-mocinno-2": {
+"sci": "Pharomachrus mocinno",
+"name": "Resplendent Quetzal",
+"by": "(c) Cephas, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 0.9
+},
+"campylopterus-hemileucurus-0": {
+"sci": "Campylopterus hemileucurus",
+"name": "Violet Sabrewing",
+"by": "(c) hberal, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"campylopterus-hemileucurus-1": {
+"sci": "Campylopterus hemileucurus",
+"name": "Violet Sabrewing",
+"by": "(c) Anthony Batista, some rights reserved (CC BY), uploaded by Anthony Batista",
+"license": "cc-by",
+"score": 2.7
+},
+"campylopterus-hemileucurus-2": {
+"sci": "Campylopterus hemileucurus",
+"name": "Violet Sabrewing",
+"by": "(c) Ad Konings, some rights reserved (CC BY-NC), uploaded by Ad Konings",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"alca-torda-0": {
+"sci": "Alca torda",
+"name": "Razorbill",
+"by": "(c) dkirschke, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"alca-torda-1": {
+"sci": "Alca torda",
+"name": "Razorbill",
+"by": "(c) chris roberts, some rights reserved (CC BY-NC), uploaded by chris roberts",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"alca-torda-2": {
+"sci": "Alca torda",
+"name": "Razorbill",
+"by": "(c) Ant\u00f3nio Terra, some rights reserved (CC BY-NC), uploaded by Ant\u00f3nio Terra",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"aramides-albiventris-0": {
+"sci": "Aramides albiventris",
+"name": "Russet-naped Wood-Rail",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"aramides-albiventris-1": {
+"sci": "Aramides albiventris",
+"name": "Russet-naped Wood-Rail",
+"by": "(c) Heiner Ziegler, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"aramides-albiventris-2": {
+"sci": "Aramides albiventris",
+"name": "Russet-naped Wood-Rail",
+"by": "(c) Carlos Alvarez N., some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"piranga-bidentata-0": {
+"sci": "Piranga bidentata",
+"name": "Flame-colored Tanager",
+"by": "(c) Marco Zozaya, some rights reserved (CC BY-NC), uploaded by Marco Zozaya",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"piranga-bidentata-1": {
+"sci": "Piranga bidentata",
+"name": "Flame-colored Tanager",
+"by": "(c) Jerry Oldenettel, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"piranga-bidentata-2": {
+"sci": "Piranga bidentata",
+"name": "Flame-colored Tanager",
+"by": "(c) Ragnhild&Neil Crawford, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"crotophaga-ani-0": {
+"sci": "Crotophaga ani",
+"name": "Smooth-billed Ani",
+"by": "(c) Esteban Poveda, some rights reserved (CC BY), uploaded by Esteban Poveda",
+"license": "cc-by",
+"score": 3.3
+},
+"crotophaga-ani-1": {
+"sci": "Crotophaga ani",
+"name": "Smooth-billed Ani",
+"by": "(c) Esteban Poveda, some rights reserved (CC BY), uploaded by Esteban Poveda",
+"license": "cc-by",
+"score": 3.16
+},
+"crotophaga-ani-2": {
+"sci": "Crotophaga ani",
+"name": "Smooth-billed Ani",
+"by": "(c) Elvis Jimenez, some rights reserved (CC BY-NC), uploaded by Elvis Jimenez",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"saltator-atriceps-0": {
+"sci": "Saltator atriceps",
+"name": "Black-headed Saltator",
+"by": "(c) angel_castillo_birdingtours, some rights reserved (CC BY-NC), uploaded by angel_castillo_birdingtours",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"saltator-atriceps-1": {
+"sci": "Saltator atriceps",
+"name": "Black-headed Saltator",
+"by": "(c) Jos\u00e9 Humberto Casta\u00f1\u00f3n Gonz\u00e1lez, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"saltator-atriceps-2": {
+"sci": "Saltator atriceps",
+"name": "Black-headed Saltator",
+"by": "(c) victorayrtonphotography, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"ortalis-poliocephala-0": {
+"sci": "Ortalis poliocephala",
+"name": "West Mexican Chachalaca",
+"by": "(c) zihuadean, some rights reserved (CC BY-NC), uploaded by zihuadean",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"ortalis-poliocephala-1": {
+"sci": "Ortalis poliocephala",
+"name": "West Mexican Chachalaca",
+"by": "(c) Gian_Reyes, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"ortalis-poliocephala-2": {
+"sci": "Ortalis poliocephala",
+"name": "West Mexican Chachalaca",
+"by": "(c) Kirstyn Eckhardt, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"setophaga-cerulea-0": {
+"sci": "Setophaga cerulea",
+"name": "Cerulean Warbler",
+"by": "(c) Donna Pomeroy, some rights reserved (CC BY-NC), uploaded by Donna Pomeroy",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"setophaga-cerulea-1": {
+"sci": "Setophaga cerulea",
+"name": "Cerulean Warbler",
+"by": "(c) JoAnne-Russo, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"setophaga-cerulea-2": {
+"sci": "Setophaga cerulea",
+"name": "Cerulean Warbler",
+"by": "(c) Quinten Wiegersma, some rights reserved (CC BY), uploaded by Quinten Wiegersma",
+"license": "cc-by",
+"score": 3.3
+},
+"lagopus-leucura-0": {
+"sci": "Lagopus leucura",
+"name": "White-tailed Ptarmigan",
+"by": "no rights reserved, uploaded by Braden J. Judson",
+"license": "cc0",
+"score": 3.3
+},
+"lagopus-leucura-1": {
+"sci": "Lagopus leucura",
+"name": "White-tailed Ptarmigan",
+"by": "no rights reserved, uploaded by Braden J. Judson",
+"license": "cc0",
+"score": 3.3
+},
+"lagopus-leucura-2": {
+"sci": "Lagopus leucura",
+"name": "White-tailed Ptarmigan",
+"by": "(c) Dave Govoni, some rights reserved (CC BY-NC-SA), uploaded by Dave Govoni",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"turdus-merula-0": {
+"sci": "Turdus merula",
+"name": "Eurasian Blackbird",
+"by": "(c) Andreas Trepte, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"turdus-merula-1": {
+"sci": "Turdus merula",
+"name": "Eurasian Blackbird",
+"by": "(c) jamesbot, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"turdus-merula-2": {
+"sci": "Turdus merula",
+"name": "Eurasian Blackbird",
+"by": "(c) johanni, some rights reserved (CC BY-NC), uploaded by johanni",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"falco-tinnunculus-0": {
+"sci": "Falco tinnunculus",
+"name": "Eurasian Kestrel",
+"by": "(c) Manuel Raab, some rights reserved (CC BY-NC), uploaded by Manuel Raab",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"falco-tinnunculus-1": {
+"sci": "Falco tinnunculus",
+"name": "Eurasian Kestrel",
+"by": "(c) Manuel Raab, some rights reserved (CC BY-NC), uploaded by Manuel Raab",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"falco-tinnunculus-2": {
+"sci": "Falco tinnunculus",
+"name": "Eurasian Kestrel",
+"by": "(c) Erik Eckstein, some rights reserved (CC BY-NC), uploaded by Erik Eckstein",
+"license": "cc-by-nc",
+"score": 3.29
+},
+"corvus-corone-0": {
+"sci": "Corvus corone",
+"name": "Carrion Crow",
+"by": "(c) cello caruso-turiello, some rights reserved (CC BY), uploaded by cello caruso-turiello",
+"license": "cc-by",
+"score": 3.3
+},
+"corvus-corone-1": {
+"sci": "Corvus corone",
+"name": "Carrion Crow",
+"by": "(c) Shreybae, some rights reserved (CC BY-NC), uploaded by Shreybae",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"corvus-corone-2": {
+"sci": "Corvus corone",
+"name": "Carrion Crow",
+"by": "(c) Eidiu, some rights reserved (CC BY-NC), uploaded by Eidiu",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"saxicola-rubicola-0": {
+"sci": "Saxicola rubicola",
+"name": "European Stonechat",
+"by": "(c) Paul Lewis, some rights reserved (CC BY), uploaded by Paul Lewis",
+"license": "cc-by",
+"score": 3.3
+},
+"saxicola-rubicola-1": {
+"sci": "Saxicola rubicola",
+"name": "European Stonechat",
+"by": "(c) Erik Eckstein, some rights reserved (CC BY-NC), uploaded by Erik Eckstein",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"saxicola-rubicola-2": {
+"sci": "Saxicola rubicola",
+"name": "European Stonechat",
+"by": "(c) Paul Lewis, some rights reserved (CC BY), uploaded by Paul Lewis",
+"license": "cc-by",
+"score": 3.3
+},
+"haematopus-ostralegus-0": {
+"sci": "Haematopus ostralegus",
+"name": "Eurasian Oystercatcher",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC), uploaded by Paul Cools",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"haematopus-ostralegus-1": {
+"sci": "Haematopus ostralegus",
+"name": "Eurasian Oystercatcher",
+"by": "(c) Szymon Bzoma, some rights reserved (CC BY-NC), uploaded by Szymon Bzoma",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"haematopus-ostralegus-2": {
+"sci": "Haematopus ostralegus",
+"name": "Eurasian Oystercatcher",
+"by": "(c) Antti Henttonen, some rights reserved (CC BY-NC), uploaded by Antti Henttonen",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"actitis-hypoleucos-0": {
+"sci": "Actitis hypoleucos",
+"name": "Common Sandpiper",
+"by": "(c) Vijay Anand Ismavel, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"actitis-hypoleucos-1": {
+"sci": "Actitis hypoleucos",
+"name": "Common Sandpiper",
+"by": "(c) Sergey Pisarevskiy, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.0
+},
+"actitis-hypoleucos-2": {
+"sci": "Actitis hypoleucos",
+"name": "Common Sandpiper",
+"by": "(c) Ian White, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.0
+},
+"tadorna-tadorna-0": {
+"sci": "Tadorna tadorna",
+"name": "Common Shelduck",
+"by": "(c) Sega Black - Sea, some rights reserved (CC BY-NC), uploaded by Sega Black - Sea",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"tadorna-tadorna-1": {
+"sci": "Tadorna tadorna",
+"name": "Common Shelduck",
+"by": "(c) thegreatdodo, some rights reserved (CC BY-NC), uploaded by thegreatdodo",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"tadorna-tadorna-2": {
+"sci": "Tadorna tadorna",
+"name": "Common Shelduck",
+"by": "(c) Mark Kilner, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 2.7
+},
+"phoenicopterus-roseus-0": {
+"sci": "Phoenicopterus roseus",
+"name": "Greater Flamingo",
+"by": "(c) cog2022, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"phoenicopterus-roseus-1": {
+"sci": "Phoenicopterus roseus",
+"name": "Greater Flamingo",
+"by": "(c) Agust\u00edn Povedano, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 2.7
+},
+"phoenicopterus-roseus-2": {
+"sci": "Phoenicopterus roseus",
+"name": "Greater Flamingo",
+"by": "(c) Pierre-Marie Epiney, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 2.7
+},
+"phylloscopus-trochilus-0": {
+"sci": "Phylloscopus trochilus",
+"name": "Willow Warbler",
+"by": "(c) avaitere, some rights reserved (CC BY-NC), uploaded by avaitere",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"phylloscopus-trochilus-1": {
+"sci": "Phylloscopus trochilus",
+"name": "Willow Warbler",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC), uploaded by Paul Cools",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"phylloscopus-trochilus-2": {
+"sci": "Phylloscopus trochilus",
+"name": "Willow Warbler",
+"by": "(c) Frank Sengpiel, some rights reserved (CC BY), uploaded by Frank Sengpiel",
+"license": "cc-by",
+"score": 3.3
+},
+"strix-aluco-0": {
+"sci": "Strix aluco",
+"name": "Tawny Owl",
+"by": "(c) caroline legg, some rights reserved (CC BY)",
+"license": "cc-by",
+"score": 3.3
+},
+"strix-aluco-1": {
+"sci": "Strix aluco",
+"name": "Tawny Owl",
+"by": "(c) Erik Eckstein, some rights reserved (CC BY-NC), uploaded by Erik Eckstein",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"strix-aluco-2": {
+"sci": "Strix aluco",
+"name": "Tawny Owl",
+"by": "(c) Pekka Malinen, some rights reserved (CC BY-NC-SA), uploaded by Pekka Malinen",
+"license": "cc-by-nc-sa",
+"score": 3.0
+},
+"recurvirostra-avosetta-0": {
+"sci": "Recurvirostra avosetta",
+"name": "Pied Avocet",
+"by": "(c) Chia\u26a1aka Cory Chiappone, some rights reserved (CC BY-NC), uploaded by Chia\u26a1aka Cory Chiappone",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"recurvirostra-avosetta-1": {
+"sci": "Recurvirostra avosetta",
+"name": "Pied Avocet",
+"by": "(c) thegreatdodo, some rights reserved (CC BY-NC), uploaded by thegreatdodo",
+"license": "cc-by-nc",
+"score": 2.99
+},
+"recurvirostra-avosetta-2": {
+"sci": "Recurvirostra avosetta",
+"name": "Pied Avocet",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC), uploaded by Paul Cools",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"cygnus-cygnus-0": {
+"sci": "Cygnus cygnus",
+"name": "Whooper Swan",
+"by": "(c) Bird Explorers, some rights reserved (CC BY-NC), uploaded by Bird Explorers",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"cygnus-cygnus-1": {
+"sci": "Cygnus cygnus",
+"name": "Whooper Swan",
+"by": "(c) Ramun\u0117 Vakar\u0117, some rights reserved (CC BY-NC-SA), uploaded by Ramun\u0117 Vakar\u0117",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"cygnus-cygnus-2": {
+"sci": "Cygnus cygnus",
+"name": "Whooper Swan",
+"by": "(c) \u0418\u043b\u044c\u044f \u0421\u0443\u0445\u043e\u0432, some rights reserved (CC BY-NC), uploaded by \u0418\u043b\u044c\u044f \u0421\u0443\u0445\u043e\u0432",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"falco-subbuteo-0": {
+"sci": "Falco subbuteo",
+"name": "Eurasian Hobby",
+"by": "(c) \u041d\u0430\u0442\u0430\u043b\u0438\u044f, some rights reserved (CC BY-NC), uploaded by \u041d\u0430\u0442\u0430\u043b\u0438\u044f",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"falco-subbuteo-1": {
+"sci": "Falco subbuteo",
+"name": "Eurasian Hobby",
+"by": "(c) Stas &amp; Lana, some rights reserved (CC BY-NC), uploaded by Stas &amp; Lana",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"falco-subbuteo-2": {
+"sci": "Falco subbuteo",
+"name": "Eurasian Hobby",
+"by": "(c) Ani Sarkisyan, some rights reserved (CC BY), uploaded by Ani Sarkisyan",
+"license": "cc-by",
+"score": 3.0
+},
+"curruca-curruca-0": {
+"sci": "Curruca curruca",
+"name": "Lesser Whitethroat",
+"by": "(c) \u0415\u0432\u0433\u0435\u043d\u0438\u0439 \u0413\u0443\u0440\u044c\u0435\u0432\u0441\u043a\u0438\u0445, some rights reserved (CC BY-NC), uploaded by \u0415\u0432\u0433\u0435\u043d\u0438\u0439 \u0413\u0443\u0440\u044c\u0435\u0432\u0441\u043a\u0438\u0445",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"curruca-curruca-1": {
+"sci": "Curruca curruca",
+"name": "Lesser Whitethroat",
+"by": "(c) \u041c\u0430\u043a\u0441\u0438\u043c \u0418\u0441\u043c\u0430\u0439\u043b\u043e\u0432, some rights reserved (CC BY-NC), uploaded by \u041c\u0430\u043a\u0441\u0438\u043c \u0418\u0441\u043c\u0430\u0439\u043b\u043e\u0432",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"curruca-curruca-2": {
+"sci": "Curruca curruca",
+"name": "Lesser Whitethroat",
+"by": "(c) Saurabh Agrawal, some rights reserved (CC BY-NC), uploaded by Saurabh Agrawal",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"lanius-senator-0": {
+"sci": "Lanius senator",
+"name": "Woodchat Shrike",
+"by": "(c) Ximo Galarza, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.0
+},
+"lanius-senator-1": {
+"sci": "Lanius senator",
+"name": "Woodchat Shrike",
+"by": "(c) Ximo Galarza, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.0
+},
+"lanius-senator-2": {
+"sci": "Lanius senator",
+"name": "Woodchat Shrike",
+"by": "(c) Mishanook, some rights reserved (CC BY-NC), uploaded by Mishanook",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"motacilla-citreola-0": {
+"sci": "Motacilla citreola",
+"name": "Citrine Wagtail",
+"by": "(c) egorbirder, some rights reserved (CC BY)",
+"license": "cc-by",
+"score": 3.3
+},
+"motacilla-citreola-1": {
+"sci": "Motacilla citreola",
+"name": "Citrine Wagtail",
+"by": "(c) PVidwansa, some rights reserved (CC BY-NC), uploaded by PVidwansa",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"motacilla-citreola-2": {
+"sci": "Motacilla citreola",
+"name": "Citrine Wagtail",
+"by": "(c) \u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432 \u042e\u0441\u0443\u043f\u043e\u0432, some rights reserved (CC BY), uploaded by \u0412\u044f\u0447\u0435\u0441\u043b\u0430\u0432 \u042e\u0441\u0443\u043f\u043e\u0432",
+"license": "cc-by",
+"score": 3.0
+},
+"tringa-erythropus-0": {
+"sci": "Tringa erythropus",
+"name": "Spotted Redshank",
+"by": "(c) Nik Borrow, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"tringa-erythropus-1": {
+"sci": "Tringa erythropus",
+"name": "Spotted Redshank",
+"by": "(c) William Van Hemessen, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"tringa-erythropus-2": {
+"sci": "Tringa erythropus",
+"name": "Spotted Redshank",
+"by": "(c) Miles Heisel, some rights reserved (CC BY-NC), uploaded by Miles Heisel",
+"license": "cc-by-nc",
+"score": 3.25
+},
+"sternula-albifrons-0": {
+"sci": "Sternula albifrons",
+"name": "Little Tern",
+"by": "(c) PotMart186, some rights reserved (CC BY-SA)",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"sternula-albifrons-1": {
+"sci": "Sternula albifrons",
+"name": "Little Tern",
+"by": "(c) Leo, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"sternula-albifrons-2": {
+"sci": "Sternula albifrons",
+"name": "Little Tern",
+"by": "(c) Ben Ackerley, some rights reserved (CC BY-NC), uploaded by Ben Ackerley",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"gavia-arctica-0": {
+"sci": "Gavia arctica",
+"name": "Arctic Loon",
+"by": "(c) Erik Eckstein, some rights reserved (CC BY-NC), uploaded by Erik Eckstein",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"gavia-arctica-1": {
+"sci": "Gavia arctica",
+"name": "Arctic Loon",
+"by": "(c) alexey_nesmelov, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"gavia-arctica-2": {
+"sci": "Gavia arctica",
+"name": "Arctic Loon",
+"by": "(c) Volker Heinrich, some rights reserved (CC BY-NC), uploaded by Volker Heinrich",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"panurus-biarmicus-0": {
+"sci": "Panurus biarmicus",
+"name": "Bearded Reedling",
+"by": "(c) \u041d\u0438\u043d\u0430 \u0428\u0442\u0435\u0439\u043d\u0431\u0440\u0435\u043d\u043d\u0435\u0440, some rights reserved (CC BY-NC), uploaded by \u041d\u0438\u043d\u0430 \u0428\u0442\u0435\u0439\u043d\u0431\u0440\u0435\u043d\u043d\u0435\u0440",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"panurus-biarmicus-1": {
+"sci": "Panurus biarmicus",
+"name": "Bearded Reedling",
+"by": "(c) Erik Eckstein, some rights reserved (CC BY-NC), uploaded by Erik Eckstein",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"panurus-biarmicus-2": {
+"sci": "Panurus biarmicus",
+"name": "Bearded Reedling",
+"by": "(c) \u0410\u043b\u0435\u043a\u0441\u0430\u043d\u0434\u0440 \u041a\u043e\u0447\u0435\u0442\u043a\u043e\u0432, some rights reserved (CC BY-NC), uploaded by \u0410\u043b\u0435\u043a\u0441\u0430\u043d\u0434\u0440 \u041a\u043e\u0447\u0435\u0442\u043a\u043e\u0432",
+"license": "cc-by-nc",
+"score": 2.6
+},
+"threskiornis-aethiopicus-0": {
+"sci": "Threskiornis aethiopicus",
+"name": "African Sacred Ibis",
+"by": "(c) \u66f9\u6b63\u90a6, some rights reserved (CC BY-NC), uploaded by \u66f9\u6b63\u90a6",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"threskiornis-aethiopicus-1": {
+"sci": "Threskiornis aethiopicus",
+"name": "African Sacred Ibis",
+"by": "(c) Federico Moroni, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"threskiornis-aethiopicus-2": {
+"sci": "Threskiornis aethiopicus",
+"name": "African Sacred Ibis",
+"by": "(c) CI Jay, some rights reserved (CC BY-NC), uploaded by CI Jay",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"picus-sharpei-0": {
+"sci": "Picus sharpei",
+"name": "Iberian Green Woodpecker",
+"by": "(c) jjulio2000, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"picus-sharpei-1": {
+"sci": "Picus sharpei",
+"name": "Iberian Green Woodpecker",
+"by": "(c) Agust\u00edn Povedano, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"picus-sharpei-2": {
+"sci": "Picus sharpei",
+"name": "Iberian Green Woodpecker",
+"by": "(c) Pablo Pozo, some rights reserved (CC BY-NC), uploaded by Pablo Pozo",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"clanga-pomarina-0": {
+"sci": "Clanga pomarina",
+"name": "Lesser Spotted Eagle",
+"by": "(c) alexey_nesmelov, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"clanga-pomarina-1": {
+"sci": "Clanga pomarina",
+"name": "Lesser Spotted Eagle",
+"by": "(c) zametnya, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"clanga-pomarina-2": {
+"sci": "Clanga pomarina",
+"name": "Lesser Spotted Eagle",
+"by": "(c) i_c_riddell, some rights reserved (CC BY), uploaded by i_c_riddell",
+"license": "cc-by",
+"score": 3.29
+},
+"lanius-minor-0": {
+"sci": "Lanius minor",
+"name": "Lesser Grey Shrike",
+"by": "(c) \u0410\u043d\u0434\u0440\u0456\u0439 \u041a\u043e\u0437\u043b\u043e\u0432\u0435\u0446\u044c, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"lanius-minor-1": {
+"sci": "Lanius minor",
+"name": "Lesser Grey Shrike",
+"by": "(c) Ron Knight, some rights reserved (CC BY)",
+"license": "cc-by",
+"score": 3.3
+},
+"lanius-minor-2": {
+"sci": "Lanius minor",
+"name": "Lesser Grey Shrike",
+"by": "(c) Puzankov Aleksei, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"glaucidium-passerinum-0": {
+"sci": "Glaucidium passerinum",
+"name": "Eurasian Pygmy-Owl",
+"by": "(c) Serguei Kossenko, some rights reserved (CC BY-NC), uploaded by Serguei Kossenko",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"glaucidium-passerinum-1": {
+"sci": "Glaucidium passerinum",
+"name": "Eurasian Pygmy-Owl",
+"by": "(c) Mikhail Nevsky, some rights reserved (CC BY), uploaded by Mikhail Nevsky",
+"license": "cc-by",
+"score": 3.0
+},
+"glaucidium-passerinum-2": {
+"sci": "Glaucidium passerinum",
+"name": "Eurasian Pygmy-Owl",
+"by": "(c) Fran\u00e7ois-Xavier Taxil, some rights reserved (CC BY-NC), uploaded by Fran\u00e7ois-Xavier Taxil",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"locustella-luscinioides-0": {
+"sci": "Locustella luscinioides",
+"name": "Savi's Warbler",
+"by": "(c) Dina Nesterkova, some rights reserved (CC BY-NC), uploaded by Dina Nesterkova",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"locustella-luscinioides-1": {
+"sci": "Locustella luscinioides",
+"name": "Savi's Warbler",
+"by": "(c) Pep Cant\u00f3, some rights reserved (CC BY-NC), uploaded by Pep Cant\u00f3",
+"license": "cc-by-nc",
+"score": 2.3
+},
+"locustella-luscinioides-2": {
+"sci": "Locustella luscinioides",
+"name": "Savi's Warbler",
+"by": "(c) simarillon, some rights reserved (CC BY-NC), uploaded by simarillon",
+"license": "cc-by-nc",
+"score": 1.41
+},
+"glareola-pratincola-0": {
+"sci": "Glareola pratincola",
+"name": "Collared Pratincole",
+"by": "(c) Fco. Javier P\u00e9rez Mata, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"glareola-pratincola-1": {
+"sci": "Glareola pratincola",
+"name": "Collared Pratincole",
+"by": "(c) Tomas Chipiri Buruwate, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"glareola-pratincola-2": {
+"sci": "Glareola pratincola",
+"name": "Collared Pratincole",
+"by": "(c) Werner Witte, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"porzana-porzana-0": {
+"sci": "Porzana porzana",
+"name": "Spotted Crake",
+"by": "(c) aep-prina, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"porzana-porzana-1": {
+"sci": "Porzana porzana",
+"name": "Spotted Crake",
+"by": "(c) Dmitry Dubikovskiy, some rights reserved (CC BY-NC), uploaded by Dmitry Dubikovskiy",
+"license": "cc-by-nc",
+"score": 3.23
+},
+"porzana-porzana-2": {
+"sci": "Porzana porzana",
+"name": "Spotted Crake",
+"by": "(c) Dmitry Dubikovskiy, some rights reserved (CC BY-NC), uploaded by Dmitry Dubikovskiy",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"monticola-saxatilis-0": {
+"sci": "Monticola saxatilis",
+"name": "Rufous-tailed Rock-Thrush",
+"by": "(c) cog2022, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"monticola-saxatilis-1": {
+"sci": "Monticola saxatilis",
+"name": "Rufous-tailed Rock-Thrush",
+"by": "(c) Francesco Veronesi, some rights reserved (CC BY-NC-SA)",
+"license": "cc-by-nc-sa",
+"score": 3.3
+},
+"monticola-saxatilis-2": {
+"sci": "Monticola saxatilis",
+"name": "Rufous-tailed Rock-Thrush",
+"by": "(c) Andrew Bazdyrev, some rights reserved (CC BY), uploaded by Andrew Bazdyrev",
+"license": "cc-by",
+"score": 3.3
+},
+"aquila-nipalensis-0": {
+"sci": "Aquila nipalensis",
+"name": "Steppe Eagle",
+"by": "(c) Christoph Moning, some rights reserved (CC BY), uploaded by Christoph Moning",
+"license": "cc-by",
+"score": 3.3
+},
+"aquila-nipalensis-1": {
+"sci": "Aquila nipalensis",
+"name": "Steppe Eagle",
+"by": "(c) Nik Borrow, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"aquila-nipalensis-2": {
+"sci": "Aquila nipalensis",
+"name": "Steppe Eagle",
+"by": "(c) Kudaibergen Amirekul, some rights reserved (CC BY-SA), uploaded by Kudaibergen Amirekul",
+"license": "cc-by-sa",
+"score": 3.0
+},
+"pterocles-alchata-0": {
+"sci": "Pterocles alchata",
+"name": "Pin-tailed Sandgrouse",
+"by": "(c) Shlomi Levi, some rights reserved (CC BY-NC), uploaded by Shlomi Levi",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"pterocles-alchata-1": {
+"sci": "Pterocles alchata",
+"name": "Pin-tailed Sandgrouse",
+"by": "(c) abcdefgewing, some rights reserved (CC BY-NC), uploaded by abcdefgewing",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"pterocles-alchata-2": {
+"sci": "Pterocles alchata",
+"name": "Pin-tailed Sandgrouse",
+"by": "(c) abcdefgewing, some rights reserved (CC BY-NC), uploaded by abcdefgewing",
+"license": "cc-by-nc",
+"score": 2.7
+},
+"puffinus-yelkouan-0": {
+"sci": "Puffinus yelkouan",
+"name": "Yelkouan Shearwater",
+"by": "(c) Julien Renoult, some rights reserved (CC BY), uploaded by Julien Renoult",
+"license": "cc-by",
+"score": 3.3
+},
+"puffinus-yelkouan-1": {
+"sci": "Puffinus yelkouan",
+"name": "Yelkouan Shearwater",
+"by": "(c) John D Reynolds, some rights reserved (CC BY-NC), uploaded by John D Reynolds",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"puffinus-yelkouan-2": {
+"sci": "Puffinus yelkouan",
+"name": "Yelkouan Shearwater",
+"by": "(c) Luca Boscain, some rights reserved (CC BY-NC), uploaded by Luca Boscain",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"emberiza-pusilla-0": {
+"sci": "Emberiza pusilla",
+"name": "Little Bunting",
+"by": "(c) Paul Cools, some rights reserved (CC BY-NC), uploaded by Paul Cools",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"emberiza-pusilla-1": {
+"sci": "Emberiza pusilla",
+"name": "Little Bunting",
+"by": "(c) Irina Butorina, some rights reserved (CC BY-NC), uploaded by Irina Butorina",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"emberiza-pusilla-2": {
+"sci": "Emberiza pusilla",
+"name": "Little Bunting",
+"by": "(c) Kim, Hyun-tae, some rights reserved (CC BY), uploaded by Kim, Hyun-tae",
+"license": "cc-by",
+"score": 3.29
+},
+"alectoris-graeca-0": {
+"sci": "Alectoris graeca",
+"name": "Rock Partridge",
+"by": "(c) Emanuele Santarelli, some rights reserved (CC BY-SA), uploaded by Emanuele Santarelli",
+"license": "cc-by-sa",
+"score": 3.3
+},
+"alectoris-graeca-1": {
+"sci": "Alectoris graeca",
+"name": "Rock Partridge",
+"by": "(c) dimitriskokkinidis, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"alectoris-graeca-2": {
+"sci": "Alectoris graeca",
+"name": "Rock Partridge",
+"by": "(c) dimitriskokkinidis, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.0
+},
+"iduna-pallida-0": {
+"sci": "Iduna pallida",
+"name": "Eastern Olivaceous Warbler",
+"by": "(c) andriy_miskov, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 3.3
+},
+"iduna-pallida-1": {
+"sci": "Iduna pallida",
+"name": "Eastern Olivaceous Warbler",
+"by": "(c) Adrien Mauss, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.67
+},
+"iduna-pallida-2": {
+"sci": "Iduna pallida",
+"name": "Eastern Olivaceous Warbler",
+"by": "(c) Jakob Fahr, some rights reserved (CC BY-NC)",
+"license": "cc-by-nc",
+"score": 2.67
+}
+}
