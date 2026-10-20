@@ -6,6 +6,7 @@ import { parseMarks, rank, versusNote } from './match.js';
 import * as sound from './sound.js';
 import { drawCard } from './card.js';
 import { drawMap } from './map.js';
+import * as forecast from './forecast.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -165,6 +166,7 @@ async function renderNearby() {
     <span class="rw">+${tierOfChance(s.chance)}</span></button>`;
   v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr"><span><b>${toFind.length}</b> TO FIND</span></div></div>
     <div class="sub"><span>Within 25 km · last 30 days · ${state.nearby.spotCount} hotspots checked</span><button id="refresh" class="close">↻</button></div>
+    <div id="fcast"></div>
     <div class="lab">TODAY'S HUNT · ${hunt.filter(h => h.done).length} OF ${hunt.length} FOUND</div>
     <div class="hunt">${hunt.map(h => `<button class="hrow nr ${h.done ? 'done' : ''}" data-sci="${esc(h.sci)}" data-name="${esc(h.name)}"><div class="ic">${icon(h.sci, h.name, h.done ? undefined : { kind: 'sil', sil: '#0c1610' })}</div>
       <div class="mid"><b>${esc(h.name)} <span class="tag">${h.lvl}</span></b><small>${h.done ? 'Found today!' : clue(h)}</small></div><span class="rw">+${h.xp}</span></button>`).join('') || '<p class="muted">Not enough reports nearby yet.</p>'}</div>
@@ -174,6 +176,24 @@ async function renderNearby() {
   $('#refresh').onclick = async () => { await loadNearby(true); renderNearby(); };
   v.querySelectorAll('[data-sci]').forEach(b => b.onclick = () => openBird(b.dataset.sci, b.dataset.name));
   renderMoves(caught);
+  renderForecast();
+}
+
+async function getForecast() {
+  const loc = await ensureLoc(); if (!loc) return null;
+  const wx = await forecast.weather(loc);
+  const m = await api.migration(state.nearby?.county).catch(() => null);
+  return forecast.score(wx, new Date(), m?.arriving.length || 0);
+}
+
+async function renderForecast() {
+  const f = await getForecast().catch(() => null);
+  const box = $('#fcast'); if (!box || !f) return;
+  box.innerHTML = `<button class="fc" id="fcBtn"><div class="fcl"><small>BIRDING ${f.when}</small><b>${f.label}</b></div>
+    <div class="stars">${'★'.repeat(f.stars)}<i>${'★'.repeat(5 - f.stars)}</i></div>
+    <div class="fcw">${esc(f.why[0])}${f.best ? `<br><span>Best: ${f.best}</span>` : ''}</div>
+    <ul hidden>${f.why.slice(1).map(w => `<li>${esc(w)}</li>`).join('')}</ul></button>`;
+  $('#fcBtn').onclick = () => { const u = box.querySelector('ul'); u.hidden = !u.hidden; };
 }
 
 // Migration: birds arriving (or leaving) your county this week.
@@ -195,15 +215,18 @@ const plural = n => /goose$/i.test(n) ? n.replace(/oose$/i, 'eese') : /(s|ch|sh|
 // Once a day, mention the birds arriving near you that you haven't caught yet.
 async function migrationAlert() {
   try {
-    const m = await api.migration(state.nearby?.county);
+    const m = await api.migration(state.nearby?.county).catch(() => ({ arriving: [] }));
+    const f = await getForecast().catch(() => null);
     const caught = new Set(state.catches.map(c => c.sci));
     const fresh = m.arriving.filter(s => !caught.has(s.sci));
-    if (!fresh.length || (await kv.get('movesSeen')) === today()) return;
-    $('#tabNear').classList.add('dot');
-    if ((await kv.get('movesToast')) === today()) return;
+    if (fresh.length && (await kv.get('movesSeen')) !== today()) $('#tabNear').classList.add('dot');
+    if ((!fresh.length && !f) || (await kv.get('movesToast')) === today()) return;
     kv.set('movesToast', today());
     const names = fresh.slice(0, 2).map(s => plural(s.name));
-    toast(`Arriving this week: ${names.join(' and ')}${fresh.length > 2 ? ` and ${fresh.length - 2} more` : ''}. See Nearby.`, 5200);
+    const parts = [];
+    if (f) parts.push(`Birding ${f.when.toLowerCase()}: ${f.label.toLowerCase()} ${'★'.repeat(f.stars)}.`);
+    if (fresh.length) parts.push(`Arriving this week: ${names.join(' and ')}${fresh.length > 2 ? ` and ${fresh.length - 2} more` : ''}.`);
+    toast(parts.join(' ') + ' See Nearby.', 5600);
   } catch { /* alerts are a bonus */ }
 }
 const tierOfChance = c => c >= 0.55 ? 20 : c >= 0.25 ? 40 : 80;
