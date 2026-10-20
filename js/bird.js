@@ -359,11 +359,20 @@ export function birdSvg(look, m = { kind: 'full' }) {
     if (!S && col.skin) g += `<circle cx="${hx + 3}" cy="${hy - 1.5}" r="3" fill="${f('skin')}"/>`;
     g += eye(hx + 3, hy - 1.5, 1.5);
   }
+  if (facesLeft(s)) g = `<g transform="translate(64 0) scale(-1 1)">${g}</g>`;
   if (S) return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><defs>${d}</defs>${g}</svg>`;
   // Sprite style: a bold dark outline around the whole bird, ink lines between parts, and a glint in the eye.
   d += `<filter id="${id}o" x="-10%" y="-10%" width="120%" height="120%"><feMorphology in="SourceAlpha" operator="dilate" radius="1.3" result="o"/><feFlood flood-color="${INK}"/><feComposite in2="o" operator="in"/><feMerge><feMergeNode/><feMergeNode in="SourceGraphic"/></feMerge></filter>`;
   const css = `.${id} path[fill]:not([fill="none"]),.${id} ellipse,.${id} circle:not(.e),.${id} rect{stroke:${INK};stroke-width:.7;stroke-linejoin:round;paint-order:stroke}`;
   return `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" aria-hidden="true"><defs><style>${css}</style>${d}</defs><g class="${id}" filter="url(#${id}o)">${g}</g></svg>`;
+}
+
+// About half the birds face left so the dex isn't a row of identical poses. Stable per species.
+function facesLeft(look) {
+  if (look.face) return look.face === 'left';
+  let h = 7;
+  for (const ch of JSON.stringify(look)) h = (h * 31 + ch.charCodeAt(0)) >>> 0;
+  return (h >>> 3) % 2 === 0;
 }
 
 export const ballSvg = (c = '#8a5a32') => `<svg viewBox="0 0 20 20" aria-hidden="true"><circle cx="10" cy="10" r="8.6" fill="#efe7d2" stroke="#0c0c0a" stroke-width="1.6"/><path d="M1.4 10a8.6 8.6 0 0 1 17.2 0Z" fill="${c}" stroke="#0c0c0a" stroke-width="1.6"/><circle cx="10" cy="10" r="2.8" fill="#efe7d2" stroke="#0c0c0a" stroke-width="1.6"/></svg>`;
