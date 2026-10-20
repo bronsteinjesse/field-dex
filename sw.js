@@ -1,5 +1,5 @@
 // Offline support: the app shell is cached on install; the sound model and photos are cached the first time they load.
-const SHELL = 'shell-v5', RUNTIME = 'runtime-v1';
+const SHELL = 'shell-v6', RUNTIME = 'runtime-v1';
 const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
@@ -25,6 +25,6 @@ self.addEventListener('fetch', e => {
   }
   if (u.origin === location.origin) {
     // App files: network first so updates arrive, cache when offline.
-    e.respondWith(fetch(e.request).then(r => { const cl = r.clone(); caches.open(SHELL).then(c => c.put(e.request, cl)); return r; }).catch(() => caches.match(e.request).then(r => r || caches.match('index.html'))));
+    e.respondWith(fetch(e.request, { cache: 'no-cache' }).then(r => { const cl = r.clone(); caches.open(SHELL).then(c => c.put(e.request, cl)); return r; }).catch(() => caches.match(e.request).then(r => r || caches.match('index.html'))));
   }
 });
