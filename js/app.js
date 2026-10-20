@@ -352,11 +352,12 @@ function startTalk(extra = '') {
   const SRk = window.SpeechRecognition || window.webkitSpeechRecognition;
   loadNearby();
   ensureLoc();
-  const el = overlay(`<div class="tbox"><span class="listen-dot"></span>LISTENING…<small>Describe the bird out loud. Tap anywhere to finish.</small></div>
+  const el = overlay(`<div class="topbar"><button class="close" id="backBtn">✕ CANCEL</button><span class="muted">By description</span></div>
+    <div class="tbox"><span class="listen-dot"></span>LISTENING…<small>Describe the bird out loud. Tap anywhere to finish.</small></div>
     <div class="tbox" style="margin-top:10px;font-family:var(--sans);font-size:15px" id="said">${extra ? esc(extra) : '<span class="muted">“Small, gray, black cap…”</span>'}</div>
     <div class="chips" id="marks"></div>
     <div id="typeBox" hidden style="margin-top:10px"><textarea id="typed" rows="3" placeholder="Type what you see: size, colors, marks, what it's doing"></textarea></div>
-    <div class="capfoot"><div class="row"><button class="btn alt" id="photoBtn">PHOTO</button><button class="btn alt" id="listBtn">PICK FROM LIST</button><button class="btn alt" id="cancelBtn">CANCEL</button></div></div>`);
+    <div class="capfoot"><div class="row"><button class="btn alt" id="photoBtn">PHOTO</button><button class="btn alt" id="listBtn">PICK FROM LIST</button></div></div>`);
   let text = extra, rec = null, finished = false;
   const said = el.querySelector('#said'), marks = el.querySelector('#marks');
   const show = t => {
@@ -390,7 +391,7 @@ function startTalk(extra = '') {
   el.addEventListener('click', e => {
     if (e.target.closest('#photoBtn')) { finished = true; try { rec?.stop(); } catch {} el.remove(); takePhoto(text); return; }
     if (e.target.closest('#listBtn')) { finished = true; try { rec?.stop(); } catch {} el.remove(); pickFromList({ method: 'list', said: text }); return; }
-    if (e.target.closest('#cancelBtn')) { finished = true; try { rec?.stop(); } catch {} el.remove(); return; }
+    if (e.target.closest('#backBtn')) { finished = true; try { rec?.stop(); } catch {} el.remove(); return; }
     if (e.target.closest('textarea')) return;
     finish();
   });
@@ -426,13 +427,16 @@ async function shrink(file, max) {
 /* ---------- CATCH: listen (sound ID) ---------- */
 async function startListen() {
   loadNearby(); ensureLoc();
-  const el = overlay(`<div class="tbox"><span class="listen-dot"></span>LISTENING FOR BIRDS…<small>Stay quiet and point your phone toward the song. Tap anywhere to stop.</small></div>
+  const el = overlay(`<div class="topbar"><button class="close" id="backBtn">✕ CANCEL</button><span class="muted">By song</span></div>
+    <div class="tbox"><span class="listen-dot"></span>LISTENING FOR BIRDS…<small>Stay quiet and point your phone toward the song. Tap anywhere to stop.</small></div>
     <canvas class="spec" width="160" height="80" style="margin-top:10px"></canvas>
     <div id="load" class="muted" style="margin-top:8px"></div><div class="prog" id="prog" hidden><i></i></div>
     <div class="lab">HEARD SO FAR</div><div id="heard" class="muted">Nothing yet…</div>`);
   const cv = el.querySelector('canvas'), g = cv.getContext('2d');
   g.fillStyle = '#10201a'; g.fillRect(0, 0, cv.width, cv.height);
-  let session = null, stopping = false, last = [];
+  let session = null, stopping = false, cancelled = false, last = [];
+  // Cancel works even while the song model is still loading.
+  el.querySelector('#backBtn').addEventListener('click', e => { e.stopPropagation(); cancelled = true; el.remove(); session?.stop().catch(() => {}); });
   const nearSci = () => new Set((state.nearby?.species || []).map(s => s.sci));
   const filtered = d => { const ns = nearSci(); return d.filter(x => !ns.size || ns.has(x.sci) || x.p > 0.7); };
   try {
@@ -454,9 +458,10 @@ async function startListen() {
       }
     });
   } catch (e) {
-    el.remove(); toast('Field Dex needs the microphone to hear birds. Allow it in Settings.'); return;
+    el.remove(); if (!cancelled) toast('Field Dex needs the microphone to hear birds. Allow it in Settings.'); return;
   }
-  el.addEventListener('click', async () => {
+  if (cancelled) { session.stop().catch(() => {}); return; }
+  el.addEventListener('click', async e => {
     if (stopping) return; stopping = true;
     el.querySelector('.tbox').innerHTML = 'THINKING…<small>Checking the recording.</small>';
     const res = await session.stop();
