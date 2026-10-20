@@ -1,0 +1,36 @@
+name: sprite library
+on:
+  push:
+    branches: [art-sample]
+    paths: [tools/library-go.txt]
+permissions:
+  contents: write
+jobs:
+  list:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install numpy opencv-python-headless pillow
+      - run: python tools/library.py list
+      - run: |
+          git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
+          git add tools/library.txt && git commit -m "Species list for the sprite library" && git push
+  build:
+    needs: list
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix: { shard: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9] }
+    steps:
+      - uses: actions/checkout@v4
+        with: { ref: art-sample }
+      - uses: actions/setup-python@v5
+        with: { python-version: '3.11' }
+      - run: pip install "rembg[cpu]" pillow opencv-python-headless scikit-learn
+      - run: python tools/library.py build ${{ matrix.shard }} 10
+      - run: |
+          git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
+          git add art/lib && git commit -m "Sprite library shard ${{ matrix.shard }}"
+          for i in 1 2 3 4 5 6; do git pull --rebase -q origin art-sample && git push && break; sleep $((i * 5)); done
