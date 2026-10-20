@@ -30,7 +30,7 @@ export async function drawMap(el, points, onOpen) {
       const pop = document.createElement('div'); pop.className = 'mpop';
       pop.innerHTML = `<b></b><small></small><button class="btn">VIEW ENTRY</button>`;
       pop.querySelector('b').textContent = p.name;
-      pop.querySelector('small').textContent = `${when} ${how}`;
+      pop.querySelector('small').textContent = [p.place, `${when} ${how}`.trim()].filter(Boolean).join(' · ');
       pop.querySelector('button').onclick = () => onOpen(p.sci, p.name);
       m.bindPopup(pop, { closeButton: false });
     }

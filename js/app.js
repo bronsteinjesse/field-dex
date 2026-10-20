@@ -619,7 +619,7 @@ const lastSeen = c => c.sightings.at(-1)?.date || c.first;
 /* ---------- CATCH MAP ---------- */
 async function openCatchMap(only) {
   const pts = state.catches.flatMap(c => c.sightings.filter(s => s.lat != null && s.lng != null)
-    .map(s => ({ sci: c.sci, name: c.name, lat: s.lat, lng: s.lng, date: s.date, method: s.method, svg: icon(c.sci, c.name) })));
+    .map(s => ({ sci: c.sci, name: c.name, lat: s.lat, lng: s.lng, date: s.date, method: s.method, place: s.place, svg: icon(c.sci, c.name) })));
   const birds = [...new Map(pts.map(p => [p.sci, p.name])).entries()].sort((a, b) => a[1].localeCompare(b[1]));
   const noLoc = state.catches.filter(c => !c.sightings.some(s => s.lat != null)).length;
   const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">CATCH MAP</span></div>
@@ -640,7 +640,7 @@ async function openSettings() {
   const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">SETTINGS</span></div><div class="scroll">
     <div class="card"><h3>EBIRD KEY</h3><p class="muted">Free from <a href="https://ebird.org/api/keygen" target="_blank" rel="noopener">ebird.org/api/keygen</a>. Stays on this phone.</p>
       <input id="k" value="${esc(key)}" placeholder="Paste your eBird key" autocomplete="off" autocapitalize="off" spellcheck="false"><div style="height:8px"></div><button class="btn full" id="ks">SAVE</button></div>
-    <div class="card"><h3>IMPORT YOUR EBIRD LIFE LIST</h3><p class="muted">On eBird, open My eBird → Life list → Download (CSV). Pick that file here and every species on it is added as caught.</p>
+    <div class="card"><h3>IMPORT A LIFE LIST</h3><p class="muted">On eBird, open My eBird → Life list → Download (CSV). Pick that file here and every species on it is added as caught.</p>
       <button class="btn full" id="imp">CHOOSE CSV FILE</button></div>
     <div class="card"><h3>BACKUP</h3><p class="muted">Your dex lives only on this phone. Save a backup now and then.</p>
       <div class="row"><button class="btn" id="exp">SAVE BACKUP</button><button class="btn alt" id="res">RESTORE</button></div></div>
@@ -675,7 +675,8 @@ async function importCsv(file) {
   const rows = parseCsv(await file.text());
   const head = rows.shift().map(h => h.trim().toLowerCase());
   const iSci = head.findIndex(h => h.includes('scientific')), iCom = head.findIndex(h => h.includes('common')), iDate = head.findIndex(h => h === 'date' || h.includes('date'));
-  if (iSci < 0 || iCom < 0) { toast('That file doesn\'t look like an eBird life list.'); return; }
+  const iLat = head.findIndex(h => h.startsWith('lat')), iLng = head.findIndex(h => h.startsWith('lon') || h === 'lng'), iLoc = head.findIndex(h => h === 'location' || h === 'place');
+  if (iSci < 0 || iCom < 0) { toast('That file doesn\'t look like a life list.'); return; }
   let added = 0;
   for (const r of rows) {
     const sci = r[iSci]?.trim(), name = r[iCom]?.trim();
@@ -683,7 +684,10 @@ async function importCsv(file) {
     if (await catches.get(sci)) continue;
     const d = iDate >= 0 && r[iDate] ? new Date(r[iDate]) : new Date();
     const date = isNaN(d) ? new Date().toISOString() : d.toISOString();
-    await catches.put({ sci, name, code: null, first: date, count: 1, sightings: [{ date, method: 'import' }], hab: habitatOf(sci, name), rare: false });
+    const lat = parseFloat(r[iLat]), lng = parseFloat(r[iLng]);
+    const sighting = { date, method: 'import', place: iLoc >= 0 ? r[iLoc]?.trim() || null : null };
+    if (isFinite(lat) && isFinite(lng)) Object.assign(sighting, { lat, lng });
+    await catches.put({ sci, name, code: null, first: date, count: 1, sightings: [sighting], hab: habitatOf(sci, name), rare: false });
     added++;
   }
   state.catches = await catches.all(); render();
