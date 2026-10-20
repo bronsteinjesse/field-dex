@@ -22,8 +22,11 @@ for sci in BIRDS:
     full = json.loads(get(f"https://api.inaturalist.org/v1/taxa/{t['id']}"))["results"][0]
     slug = sci.lower().replace(" ", "-")
     n = 0
-    for tp in full["taxon_photos"][:30]:
-        p = tp["photo"]
+    photos = [tp["photo"] for tp in full["taxon_photos"][:30]]
+    if os.environ.get("OBS"):
+        obs = json.loads(get(f"https://api.inaturalist.org/v1/observations?taxon_id={t['id']}&quality_grade=research&photo_license=cc0,cc-by,cc-by-nc,cc-by-sa,cc-by-nc-sa&order_by=votes&per_page=30"))["results"]
+        photos = [o["photos"][0] for o in obs if o.get("photos")]
+    for p in photos:
         if p.get("license_code") not in OK: continue
         if n >= int(os.environ.get("MAX", 5)): break
         img = Image.open(io.BytesIO(get(p["url"].replace("square", "large")))).convert("RGB")
