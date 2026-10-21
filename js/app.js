@@ -2,7 +2,7 @@ import { SPECIES, BY_SCI } from './data.js';
 import { birdSvg, speciesLook, ballSvg } from './bird.js';
 import { catches, photos, kv } from './store.js';
 import * as api from './api.js';
-import { parseMarks, rank, versusNote } from './match.js';
+import { parseMarks, rank, versusNote, marksFor } from './match.js';
 import * as sound from './sound.js';
 import * as forecast from './forecast.js';
 import { SPRITES } from './sprites.js';
@@ -536,31 +536,78 @@ function cardPic(c) {
 }
 
 function showCandidates(cands, ctx) {
-  const top = cands.slice(0, 4);
+  const top = cands.slice(0, 8);
   const mineUrl = ctx.photo ? URL.createObjectURL(ctx.photo) : null;
   const el = overlay(`<div class="topbar"><button class="close" data-x>✕ CANCEL</button><span class="muted">${ctx.method === 'sound' ? 'By song' : ctx.method === 'photo' ? 'By photo' : 'By description'}</span></div>
-    <div class="scroll"><div class="tbox">WHO IS IT?<small>${ctx.parsed ? [ctx.parsed.size, ...ctx.parsed.marks].filter(Boolean).join(' · ') || 'Pick the one you saw' : 'Pick the one you saw'}</small></div>
+    <div class="scroll"><div class="tbox">WHO IS IT?<small>${ctx.parsed ? ([ctx.parsed.size, ...ctx.parsed.marks].filter(Boolean).join(' · ') || 'No field marks heard') + '<br>' : ''}Tap a bird to look through its photos before you catch it.</small></div>
     ${mineUrl ? `<div class="mine"><img src="${mineUrl}" alt="Your photo"></div>` : ''}
     <div class="pick">${top.map((c, i) => `<button class="pc ${i ? '' : 'top'}" data-i="${i}">${cardPic(c)}<b>${esc(c.name)}</b><span class="pct">${c.pct}%</span><small>${esc((c.why || []).slice(0, 3).join(' · '))}</small></button>`).join('')}</div>
     <div style="height:10px"></div><div class="row"><button class="btn alt" id="more">NONE OF THESE</button>${ctx.method !== 'photo' ? '<button class="btn alt" id="addPhoto">ADD PHOTO</button>' : ''}</div></div>`, 'solid');
   el.querySelector('[data-x]').onclick = () => el.remove();
   el.querySelector('#more').onclick = () => { el.remove(); pickFromList(ctx); };
   el.querySelector('#addPhoto')?.addEventListener('click', () => { el.remove(); takePhoto(ctx.said || ''); });
-  el.querySelectorAll('.pc').forEach(b => b.onclick = () => {
-    const c = top[+b.dataset.i];
-    const other = top.find(x => x !== c && Math.abs(x.pct - c.pct) <= 15);
-    const note = other && versusNote(c.sci, other.sci);
-    el.remove();
-    if (note) showdown(c, other, note, ctx); else gotcha(c, ctx);
-  });
+  const rejected = new Set();
+  el.querySelectorAll('.pc').forEach(b => b.onclick = () => checkBird(top, +b.dataset.i, ctx, {
+    done: () => el.remove(),
+    reject: i => { rejected.add(i); el.querySelector(`.pc[data-i="${i}"]`)?.classList.add('nope'); },
+    rejected,
+  }));
 }
 
-function showdown(a, b, note, ctx) {
-  const el = overlay(`<div class="tbox">LOOK-ALIKE SHOWDOWN<small>${esc(note)}</small></div>
-    <div class="vs">${[a, b].map((c, i) => `<button class="pc" data-i="${i}">${cardPic(c)}<b>${esc(c.name)}</b><span class="pct">${c.pct}%</span></button>`).join('')}</div>
-    <div class="capfoot"><button class="btn alt full" data-x>BACK</button></div>`, 'solid');
-  el.querySelectorAll('.pc').forEach(btn => btn.onclick = () => { el.remove(); gotcha([a, b][+btn.dataset.i], ctx); });
-  el.querySelector('[data-x]').onclick = () => { el.remove(); showCandidates([a, b], ctx); };
+// Look through one candidate's photos and marks, step to the next, and only catch when you say so.
+function checkBird(list, i, ctx, from = {}) {
+  const mineUrl = ctx.photo ? URL.createObjectURL(ctx.photo) : null;
+  const said = new Set(ctx.parsed?.marks || []);
+  const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="muted" id="pos"></span></div>
+    <div class="scroll" id="cb"></div>
+    <div class="capfoot">${list.length > 1 ? '<div class="row"><button class="btn alt" id="prev">◀︎ PREV</button><button class="btn alt" id="next">NEXT ▶︎</button></div>' : ''}
+      <div class="row"><button class="btn alt" id="nope">${list.length > 1 ? 'NOT IT' : 'BACK'}</button><button class="btn" id="yes">THAT'S IT!</button></div></div>`, 'solid');
+  const body = el.querySelector('#cb');
+  const show = () => {
+    const c = list[i];
+    el.querySelector('#pos').textContent = list.length > 1 ? `${i + 1} OF ${list.length}` : '';
+    const look = marksFor(c.sci, c.name);
+    const twin = list.find(x => x !== c && versusNote(c.sci, x.sci));
+    body.innerHTML = `${mineUrl ? `<div class="mine cmp"><img src="${mineUrl}" alt="Your photo"><span>YOUR PHOTO</span></div>` : ''}
+      <div class="chead"><div class="ic">${icon(c.sci, c.name)}</div><div><b>${esc(c.name)}</b>${c.pct != null ? ` <span class="pct">${c.pct}%</span>` : ''}<small>${esc((c.why || []).join(' · '))}</small></div></div>
+      <div class="gal" id="gal"><figure><div class="ph"></div><figcaption>Loading photos…</figcaption></figure></div><div class="muted gcount" id="gcount"></div>
+      ${twin ? `<div class="vsnote"><b>vs ${esc(twin.name)}:</b> ${esc(versusNote(c.sci, twin.sci))}</div>` : ''}
+      ${look.length ? `<div class="lab">LOOK FOR</div><div class="chips look">${look.map(m => `<span class="${said.has(m) ? 'hit' : ''}">${esc(m)}</span>`).join('')}</div>` : ''}
+      <div class="flav" id="cfact">${BY_SCI[c.sci]?.fact ? esc(BY_SCI[c.sci].fact) : ''}</div>`;
+    body.scrollTop = 0;
+    el.querySelector('#prev')?.toggleAttribute('disabled', i === 0);
+    el.querySelector('#next')?.toggleAttribute('disabled', i === list.length - 1);
+    const want = c.sci;
+    api.taxonInfo(c.sci).catch(() => null).then(t => {
+      if (list[i].sci !== want || !el.isConnected) return;
+      const gal = body.querySelector('#gal'), cnt = body.querySelector('#gcount');
+      if (!t?.photos?.length) { gal.innerHTML = `<figure><div class="ph">${icon(c.sci, c.name)}</div><figcaption>No photos available right now.</figcaption></figure>`; return; }
+      gal.innerHTML = t.photos.map((p, k) => `<figure><img ${k > 1 ? 'loading="lazy"' : ''} src="${esc(p.large || p.medium)}" alt="${esc(c.name)}"><figcaption>${esc(p.credit)} · iNaturalist</figcaption></figure>`).join('');
+      // Drop photos that fail to load; if none load, say so.
+      gal.addEventListener('error', e => { e.target.closest('figure')?.remove(); if (gal.children.length) return upd(); gal.innerHTML = `<figure><div class="ph">${icon(c.sci, c.name)}</div><figcaption>Photos need a signal. Try again in a moment.</figcaption></figure>`; cnt.textContent = ''; }, true);
+      const upd = () => { cnt.textContent = `Swipe for more · ${Math.round(gal.scrollLeft / gal.clientWidth) + 1} of ${gal.children.length}`; };
+      gal.onscroll = upd; upd();
+      const f = body.querySelector('#cfact');
+      if (f && !f.textContent && t.summary) f.textContent = t.summary.split(/(?<=\.)\s/).slice(0, 2).join(' ');
+      // Warm up the next bird's photos too.
+      const nx = list[i + 1]; if (nx) api.taxonInfo(nx.sci).then(t2 => t2?.photos?.[0] && (new Image().src = t2.photos[0].large || t2.photos[0].medium)).catch(() => {});
+    });
+  };
+  const step = d => { i = Math.max(0, Math.min(list.length - 1, i + d)); show(); };
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  el.querySelector('#prev')?.addEventListener('click', () => step(-1));
+  el.querySelector('#next')?.addEventListener('click', () => step(1));
+  // You looked and said yes, so it's caught; the wobbles still show how sure the match was.
+  el.querySelector('#yes').onclick = () => { el.remove(); from.done?.(); gotcha(list[i], ctx, true); };
+  el.querySelector('#nope').onclick = () => {
+    if (list.length < 2) { el.remove(); return; }
+    from.reject?.(i);
+    const nxt = list.findIndex((x, k) => k > i && !from.rejected?.has(k));
+    const back = list.findIndex((x, k) => !from.rejected?.has(k));
+    if (nxt >= 0) { i = nxt; show(); } else if (back >= 0 && back !== i) { i = back; show(); }
+    else { el.remove(); toast('None of these? Tap NONE OF THESE to see every bird.'); }
+  };
+  show();
 }
 
 async function pickFromList(ctx) {
@@ -577,7 +624,7 @@ async function pickFromList(ctx) {
   const draw = q => {
     const f = q ? all.filter(x => x.name.toLowerCase().includes(q) || x.sci.toLowerCase().includes(q)) : all;
     lst.innerHTML = f.slice(0, 80).map(x => `<button class="nr" data-sci="${esc(x.sci)}"><div class="ic">${icon(x.sci, x.name)}</div><div class="mid"><b>${esc(x.name)}</b><small>${x.chance ? Math.round(x.chance * 100) + '% of spots near you' : 'not reported nearby lately'}</small></div></button>`).join('');
-    lst.querySelectorAll('.nr').forEach(b => b.onclick = () => { const c = all.find(x => x.sci === b.dataset.sci); el.remove(); gotcha({ ...c, pct: 90 }, ctx); });
+    lst.querySelectorAll('.nr').forEach(b => b.onclick = () => { const c = all.find(x => x.sci === b.dataset.sci); checkBird([{ ...c, pct: null, why: [c.chance ? Math.round(c.chance * 100) + '% of spots near you' : 'not reported nearby lately'] }], 0, ctx, { done: () => el.remove() }); });
   };
   draw('');
   el.querySelector('#q').oninput = e => draw(e.target.value.trim().toLowerCase());

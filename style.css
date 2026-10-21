@@ -238,3 +238,22 @@ i.px{-webkit-mask-size:contain;mask-size:contain;-webkit-mask-repeat:no-repeat;m
 .tl{position:relative;height:6px;margin-top:5px;background:rgba(255,255,255,.07);border-radius:3px;overflow:hidden}
 .tl i{position:absolute;top:0;bottom:0;background:var(--gold);opacity:.85;border-radius:2px}
 @keyframes singblink{50%{opacity:.35}}
+
+/* checking a candidate before catching */
+.pc.nope{opacity:.35}
+.chead{display:flex;gap:10px;align-items:center;margin-top:6px}
+.chead .ic{width:56px;flex:none}
+.chead .ic .px,.chead .ic svg{width:100%}
+.chead b{font-size:17px}
+.chead .pct{font-family:var(--px);color:var(--gold);font-size:15px}
+.chead small{display:block;font-size:11.5px;color:var(--mut);margin-top:2px}
+.gal .ph{aspect-ratio:4/3;border-radius:4px;background:#2a4433;display:grid;place-items:center}
+.gal .ph .px,.gal .ph svg{width:40%}
+.gcount{font-size:11px;margin-top:4px}
+.mine.cmp{position:relative;height:110px;margin-top:0}
+.mine.cmp span{position:absolute;left:6px;bottom:5px;font-family:var(--px);font-size:11px;background:rgba(0,0,0,.55);color:#fff;padding:2px 5px;border-radius:2px}
+.vsnote{margin-top:10px;font-size:13px;line-height:1.4;background:var(--panel);border-radius:4px;padding:8px 10px}
+.chips.look span.hit{background:var(--gold);color:var(--paper-ink)}
+.btn[disabled]{opacity:.35}
+.flav:empty{display:none}
+.ov .scroll+.capfoot{margin-top:10px}
