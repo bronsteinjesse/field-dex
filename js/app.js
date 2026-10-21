@@ -4,11 +4,11 @@ import { catches, photos, kv } from './store.js';
 import * as api from './api.js';
 import { parseMarks, rank, versusNote } from './match.js';
 import * as sound from './sound.js';
-import { drawCard } from './card.js';
-import { drawMap } from './map.js';
 import * as forecast from './forecast.js';
 import { SPRITES } from './sprites.js';
 import { makeTracker } from './songid.js';
+import { identifyPhoto } from './photo.js';
+import { birdNames } from './lite.js';
 
 const $ = s => document.querySelector(s);
 const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -36,7 +36,7 @@ const spriteSrc = sci => SPRITES[slug(sci)] ? `img/birds/${slug(sci)}.png` : nul
 const icon = (sci, name, m) => {
   const src = spriteSrc(sci);
   if (!src) return birdSvg(speciesLook(sci, name), m);
-  return m?.kind === 'sil' ? `<i class="px sil" style="-webkit-mask-image:url(${src});mask-image:url(${src});background:${m.sil}"></i>` : `<img class="px" src="${src}" alt="">`;
+  return m?.kind === 'sil' ? `<i class="px sil" style="-webkit-mask-image:url(${src});mask-image:url(${src});background:${m.sil}"></i>` : `<img class="px" src="${src}" alt="" loading="lazy" decoding="async">`;
 };
 const HAB_WORD = { water: 'water', woods: 'woods', field: 'fields', town: 'towns', edge: 'brush', sky: 'open sky' };
 const habitatOf = (sci, name) => BY_SCI[sci]?.hab || ({ duck: 'water', heron: 'water', raptor: 'sky' }[speciesLook(sci, name).t]) || 'edge';
@@ -408,11 +408,38 @@ function takePhoto(said = '') {
   inp.onchange = async () => {
     const f = inp.files?.[0]; if (!f) return;
     const blob = await shrink(f, 1600);
-    loadNearby();
-    if (said) whoIsIt({ method: 'photo', said, photo: blob });
-    else pickFromList({ method: 'photo', photo: blob });
+    photoGuess({ method: 'photo', said, photo: blob });
   };
   inp.click();
+}
+
+// Names the bird in a photo, then weighs each guess by whether it's been reported near you or in your county.
+async function photoGuess(ctx) {
+  const wait = overlay(`<div class="topbar"><button class="close" data-x>✕ CANCEL</button><span class="muted">By photo</span></div>
+    <div class="tbox"><span class="listen-dot"></span>LOOKING AT YOUR PHOTO…<small>Checking it against 965 species and what's around you.</small></div>`);
+  let gone = false;
+  wait.querySelector('[data-x]').onclick = () => { gone = true; wait.remove(); };
+  const [res] = await Promise.all([identifyPhoto(ctx.photo).catch(() => null), loadNearby().catch(() => null)]);
+  const county = state.nearby?.county ? await api.regionSpecies(state.nearby.county).catch(() => null) : null;
+  const names = await birdNames().catch(() => new Map());
+  if (gone) return;
+  wait.remove();
+  const near = new Map((state.nearby?.species || []).map(s => [s.sci, s]));
+  const inCounty = county ? new Map(county.map(s => [s.sci, s])) : null;
+  const cands = (res || []).map(r => {
+    const n = near.get(r.sci);
+    const tier = n ? 'recent' : inCounty?.has(r.sci) ? 'county' : inCounty ? 'none' : 'unknown';
+    const w = { recent: 0.85 + 0.15 * Math.min(1, (n?.chance || 0) * 2), county: 0.6, none: 0.25, unknown: 0.8 }[tier];
+    const where = { recent: `reported at ${Math.round((n?.chance || 0) * 100)}% of spots near you`, county: 'recorded in your county, not lately', none: 'never recorded in your county', unknown: '' }[tier];
+    return { sci: r.sci, name: n?.name || inCounty?.get(r.sci)?.name || names.get(r.sci) || r.sci, code: n?.code, chance: n?.chance, p: r.p, score: r.p * w, why: [`photo match ${Math.round(r.p * 100)}%`, where].filter(Boolean) };
+  }).filter(c => c.score > 0.02).sort((a, b) => b.score - a.score);
+  if (!cands.length || cands[0].p < 0.12) {
+    toast(res ? 'Couldn\'t tell from this photo, so pick it from the list.' : 'Photo ID isn\'t available right now, so pick it from the list.');
+    return ctx.said ? whoIsIt(ctx) : pickFromList(ctx);
+  }
+  const tot = cands.slice(0, 4).reduce((a, c) => a + c.score, 0);
+  cands.forEach(c => c.pct = Math.max(1, Math.round(100 * c.score / tot)));
+  showCandidates(cands, ctx);
 }
 
 async function shrink(file, max) {
@@ -627,7 +654,7 @@ async function openTrainerCard() {
   el.querySelector('[data-x]').onclick = () => el.remove();
   let cv = null;
   const draw = async () => {
-    cv = await drawCard(data());
+    cv = await (await import('./card.js')).drawCard(data());
     const box = el.querySelector('#tc'); box.innerHTML = ''; cv.setAttribute('aria-label', 'Your trainer card'); box.appendChild(cv);
   };
   await draw();
@@ -655,7 +682,7 @@ async function openCatchMap(only) {
   el.querySelector('[data-x]').onclick = () => el.remove();
   const filt = sci => sci ? pts.filter(p => p.sci === sci) : pts;
   try {
-    const m = await drawMap(el.querySelector('#mp'), filt(only), (sci, name) => openBird(sci, name));
+    const m = await (await import('./map.js')).drawMap(el.querySelector('#mp'), filt(only), (sci, name) => openBird(sci, name));
     el.querySelector('#mf').onchange = e => { m.map.closePopup(); m.show(filt(e.target.value)); };
   } catch { el.querySelector('#mp').innerHTML = '<p class="muted" style="padding:12px">The map needs a connection the first time.</p>'; }
 }
@@ -768,7 +795,7 @@ function bindBall() {
   const b = $('#ball'); b.innerHTML = ballSvg();
   let y0 = null, dy = 0, moved = false;
   b.addEventListener('pointerdown', e => { y0 = e.clientY; dy = 0; moved = false; b.setPointerCapture(e.pointerId); b.classList.add('drag'); });
-  b.addEventListener('pointermove', e => { if (y0 == null) return; dy = Math.min(0, e.clientY - y0); if (dy < -8) moved = true; b.style.transform = `translate(-50%, ${Math.max(dy, -140)}px)`; });
+  b.addEventListener('pointermove', e => { if (y0 == null) return; dy = Math.min(0, e.clientY - y0); if (dy < -8 && !moved) { moved = true; sound.loadModel().catch(() => {}); } b.style.transform = `translate(-50%, ${Math.max(dy, -140)}px)`; });
   const end = () => {
     if (y0 == null) return;
     b.classList.remove('drag'); b.style.transform = '';

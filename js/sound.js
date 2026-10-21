@@ -1,27 +1,30 @@
 // Sound ID: records the mic, resamples to 48 kHz, and runs BirdNET on 3-second windows.
 // BirdNET (Cornell Lab / TU Chemnitz) is CC BY-NC-SA 4.0, used here for personal, non-commercial birding.
-const MODEL_URL = './models/birdnet.tflite';
+import { runtime } from './lite.js';
+
+// FP16 copy of BirdNET V2.4: half the download of the FP32 file, same results.
+const MODEL_URL = './models/birdnet_fp16.tflite';
 const LABELS_URL = './models/birdnet_labels.txt';
 const SR = 48000, WIN = SR * 3;
 
-let modelP = null, labels = null;
+let modelP = null, labels = null, progress = null;
 
 export function loadModel(onProgress) {
+  if (onProgress) progress = onProgress;
   return modelP ??= (async () => {
-    const { loadLiteRt, loadAndCompile } = await import('../vendor/litert/index.js');
-    await loadLiteRt(new URL('../vendor/litert/', import.meta.url).href);
+    const { loadAndCompile } = await runtime();
     const txt = await (await fetch(LABELS_URL)).text();
     labels = txt.trim().split('\n').map(l => { const [sci, name] = l.split('_'); return { sci, name }; });
     // Download with progress so the first time isn't a mystery wait.
     const r = await fetch(MODEL_URL);
-    const total = +r.headers.get('content-length') || 51726412;
+    const total = +r.headers.get('content-length') || 25932528;
     const reader = r.body.getReader(), chunks = [];
     let got = 0;
     for (;;) {
       const { done, value } = await reader.read();
       if (done) break;
       chunks.push(value); got += value.length;
-      onProgress?.(Math.min(1, got / total));
+      progress?.(Math.min(1, got / total));
     }
     const buf = new Uint8Array(got); let o = 0;
     for (const c of chunks) { buf.set(c, o); o += c.length; }
@@ -35,7 +38,7 @@ export function loadModel(onProgress) {
 const sigmoid = x => 1 / (1 + Math.exp(-x));
 
 async function classify(model, samples) {
-  const { Tensor } = await import('../vendor/litert/index.js');
+  const { Tensor } = await runtime();
   const t = new Tensor(samples, [1, WIN]);
   const out = await model.run([t]);
   const logits = await out[0].data();

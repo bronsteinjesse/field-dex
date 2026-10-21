@@ -45,13 +45,19 @@ export const kv = {
 };
 
 // Cached fetch results with an age limit, kept in IndexedDB.
-export async function cached(key, maxAgeMs, load) {
+// staleMs: an older copy (up to that age) is returned at once and refreshed in the background.
+const refreshing = new Set();
+export async function cached(key, maxAgeMs, load, staleMs = 0) {
   const hit = await kv.get('cache:' + key);
-  if (hit && Date.now() - hit.at < maxAgeMs) return hit.v;
+  const age = hit ? Date.now() - hit.at : Infinity;
+  if (age < maxAgeMs) return hit.v;
+  const fresh = async () => { const v = await load(); await kv.set('cache:' + key, { at: Date.now(), v }); return v; };
+  if (age < staleMs) {
+    if (!refreshing.has(key)) { refreshing.add(key); fresh().catch(() => {}).finally(() => refreshing.delete(key)); }
+    return hit.v;
+  }
   try {
-    const v = await load();
-    await kv.set('cache:' + key, { at: Date.now(), v });
-    return v;
+    return await fresh();
   } catch (e) {
     if (hit) return hit.v;
     throw e;

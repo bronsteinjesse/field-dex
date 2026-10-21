@@ -1,6 +1,6 @@
 // Offline support: the app shell is cached on install; the sound model and photos are cached the first time they load.
-const SHELL = 'shell-v24', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v3';
-const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'js/looks.js', 'js/sprites.js', 'js/songid.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png'];
+const SHELL = 'shell-v25', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v3';
+const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'js/looks.js', 'js/sprites.js', 'js/songid.js', 'js/lite.js', 'js/photo.js', 'js/marks.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png'];
 
 self.addEventListener('install', e => { e.waitUntil(caches.open(SHELL).then(c => c.addAll(FILES))); self.skipWaiting(); });
 self.addEventListener('activate', e => {
@@ -26,7 +26,11 @@ self.addEventListener('fetch', e => {
     return;
   }
   if (u.origin === location.origin) {
-    // App files: network first so updates arrive, cache when offline.
-    e.respondWith(fetch(e.request, { cache: 'no-cache' }).then(r => { const cl = r.clone(); caches.open(SHELL).then(c => c.put(e.request, cl)); return r; }).catch(() => caches.match(e.request).then(r => r || caches.match('index.html'))));
+    // App files: network first so updates arrive, but on a weak signal fall back to the cached copy after 1.5 s
+    // (the network copy still lands in the cache for next time).
+    const net = fetch(e.request, { cache: 'no-cache' }).then(r => { if (r.ok) { const cl = r.clone(); caches.open(SHELL).then(c => c.put(e.request, cl)); } return r; });
+    const cachedCopy = () => caches.match(e.request).then(r => r || caches.match('index.html'));
+    e.respondWith(Promise.race([net, new Promise(ok => setTimeout(ok, 1500))]).then(r => r || cachedCopy().then(c => c || net)).catch(cachedCopy));
+    e.waitUntil(net.catch(() => {}));
   }
 });

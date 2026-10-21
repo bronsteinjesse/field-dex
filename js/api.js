@@ -83,7 +83,7 @@ export async function nearbyData(loc) {
       species: Object.values(species),
       notable: [...new Map(notable.map(o => [o.sciName, { code: o.speciesCode, name: o.comName, sci: o.sciName, obs: o, km: distKm(loc, o) }])).values()],
     };
-  });
+  }, 24 * H);
 }
 
 async function checklistFrequency(county, loc) {
@@ -94,8 +94,8 @@ async function checklistFrequency(county, loc) {
     return { id: l.subId || l.subID, km: la != null ? distKm(loc, { lat: la, lng: ln }) : 99 };
   }).filter(l => l.id && l.km < 30).slice(0, 40);
   const counts = {}; let n = 0;
-  for (let i = 0; i < near.length; i += 8) {
-    const views = await Promise.all(near.slice(i, i + 8).map(l => eb(`/product/checklist/view/${l.id}`).catch(() => null)));
+  for (let i = 0; i < near.length; i += 20) {
+    const views = await Promise.all(near.slice(i, i + 20).map(l => eb(`/product/checklist/view/${l.id}`).catch(() => null)));
     for (const v of views) {
       if (!v?.obs?.length) continue;
       n++;
@@ -126,7 +126,7 @@ export async function regionName(region) {
 
 export async function speciesNear(code, loc) {
   return cached(`near:${code}:${round(loc.lat)},${round(loc.lng)}`, 6 * H,
-    () => eb(`/data/obs/geo/recent/${code}?lat=${loc.lat}&lng=${loc.lng}&dist=50&back=30`));
+    () => eb(`/data/obs/geo/recent/${code}?lat=${loc.lat}&lng=${loc.lng}&dist=50&back=30`), 3 * DAY);
 }
 
 async function inat(path) {
