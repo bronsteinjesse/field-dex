@@ -1,0 +1,18 @@
+name: fetch models
+on:
+  push:
+    branches: [art-sample]
+    paths: [tools/fetch_models.sh]
+permissions:
+  contents: write
+jobs:
+  fetch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - run: bash tools/fetch_models.sh | tee models-log.txt
+      - run: |
+          cd models-new && for f in *.tar.gz; do [ -f "$f" ] && tar xzf "$f"; done; cd ..
+          mv models-log.txt models-new/
+          git config user.name "field-dex bot"; git config user.email "actions@users.noreply.github.com"
+          git add models-new && git commit -m "Candidate models" && git push
