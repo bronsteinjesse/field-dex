@@ -16,7 +16,7 @@ const pad3 = n => String(n).padStart(3, '0');
 const fmtDate = d => new Date(d).toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
 const today = () => new Date().toISOString().slice(0, 10);
 
-const state = { tab: 'dex', catches: [], nearby: null, loc: null, nearbyErr: null, xp: 0 };
+const state = { tab: 'dex', catches: [], nearby: null, loc: null, nearbyErr: null, xp: 0, scroll: {} };
 
 /* ---------- small helpers ---------- */
 function toast(msg, ms = 2600) {
@@ -156,7 +156,7 @@ async function renderNearby() {
   const v = $('#view');
   const key = await api.ebirdKey();
   if (!key) { v.innerHTML = keyCard(); bindKeyCard(v, renderNearby); return; }
-  v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr">LOADING…</div></div>`;
+  if (!state.nearby) v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr">LOADING…</div></div>`;
   await loadNearby();
   if (state.tab !== 'nearby') return;
   if (!state.nearby) {
@@ -276,9 +276,11 @@ async function openBird(sci, nameHint) {
         ${cur?.len ? `<div class="ms"><span>Length</span><b>${cur.len} in</b><span>Wing</span><b>${cur.wing} in</b><span>Weight</span><b>${cur.wt} oz</b></div>` : ''}</div></div>
         <div class="flav" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
         <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>
+        <button class="btn full" id="quickCatch" style="margin-top:10px">${c ? 'SEEN IT AGAIN' : 'I SEE IT · CATCH'}</button>
         ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}
         ${SPRITES[slug(sci)] ? `<div class="credit">Sprite traced from a photo: ${esc(SPRITES[slug(sci)])}</div>` : ''}`;
       body.querySelector('#onMap')?.addEventListener('click', () => openCatchMap(sci));
+      body.querySelector('#quickCatch').onclick = () => { hush(); el.remove(); loadNearby(); ensureLoc(); gotcha({ sci, name, code: c?.code || state.nearby?.species.find(s => s.sci === sci)?.code, pct: 90 }, { method: 'list' }); };
       body.querySelector('#spk').onclick = e => {
         const b = e.currentTarget;
         if (b.classList.contains('on')) { hush(); return; }
@@ -319,6 +321,8 @@ async function openBird(sci, nameHint) {
       }
     },
   };
+  // Start fetching the photos now so the PHOTOS tab is ready when you get there.
+  api.taxonInfo(sci).then(t => t?.photos?.slice(0, 2).forEach(p => { new Image().src = p.large || p.medium; })).catch(() => {});
   const go = t => { hush(); el.querySelectorAll('.ptabs button').forEach(b => b.classList.toggle('on', b.dataset.tab === t)); tabs[t](); };
   el.querySelectorAll('.ptabs button').forEach(b => b.onclick = () => go(b.dataset.tab));
   go('INFO');
@@ -589,8 +593,11 @@ function gotcha(c, ctx, forced = false) {
     <span class="spark" style="left:28%;top:70px">✦</span><span class="spark" style="right:26%;top:90px">✦</span><span class="spark" style="left:56%;top:44px;font-size:15px">✦</span></div>
     <div class="tbox" id="msg" style="margin-top:10px">Go, Field Ball!</div><div id="after"></div>`, 'solid');
   const cb = el.querySelector('#cb'), wild = el.querySelector('.wild'), msg = el.querySelector('#msg');
-  setTimeout(() => { wild.classList.remove('show'); cb.hidden = false; cb.style.setProperty('--n', wobbles); cb.classList.add('wob'); msg.textContent = '…'; }, 600);
-  setTimeout(async () => {
+  const throwBall = () => { wild.classList.remove('show'); cb.hidden = false; cb.style.setProperty('--n', wobbles); cb.classList.add('wob'); msg.textContent = '…'; };
+  const t1 = setTimeout(throwBall, 600);
+  let done = false;
+  const settle = async () => {
+    if (done) return; done = true; clearTimeout(t1); clearTimeout(t2);
     if (breaks) {
       cb.classList.remove('wob'); cb.classList.add('pop'); wild.classList.add('show');
       msg.innerHTML = `Oh no! It broke free!<small>The match was only ${conf}%. Give it one more clue.</small>`;
@@ -608,7 +615,10 @@ function gotcha(c, ctx, forced = false) {
       <div class="capfoot" style="margin-top:12px"><div class="row"><button class="btn" id="viewEntry">VIEW ENTRY</button><button class="btn alt" id="ok">DONE</button></div></div>`;
     el.querySelector('#viewEntry').onclick = () => { el.remove(); openBird(c.sci, c.name); };
     el.querySelector('#ok').onclick = () => el.remove();
-  }, 600 + wobbles * 900 + 200);
+  };
+  const t2 = setTimeout(settle, 600 + wobbles * 900 + 200);
+  // Tap the scene to skip straight to the result.
+  el.querySelector('#sc').onclick = () => { if (!done) { throwBall(); cb.classList.remove('wob'); settle(); } };
 }
 
 async function saveCatch(c, ctx) {
@@ -784,11 +794,17 @@ async function restoreBackup(file) {
 }
 
 /* ---------- shell ---------- */
-function render() { state.tab === 'dex' ? renderDex() : renderNearby(); }
-function setTab(t) {
+function render() { return state.tab === 'dex' ? renderDex() : renderNearby(); }
+// Each tab keeps its scroll spot; tapping the tab you're already on jumps to its top.
+async function setTab(t) {
+  const v = $('#view');
+  if (t === state.tab) { v.scrollTo({ top: 0, behavior: 'smooth' }); return; }
+  state.scroll[state.tab] = v.scrollTop;
   state.tab = t;
   $('#tabDex').classList.toggle('on', t === 'dex'); $('#tabNear').classList.toggle('on', t === 'nearby');
-  $('#view').scrollTop = 0; render();
+  v.scrollTop = 0;
+  await render();
+  if (state.tab === t) v.scrollTop = state.scroll[t] || 0;
 }
 
 function bindBall() {
@@ -857,8 +873,29 @@ async function init() {
   render();
   // Warm up location + nearby in the background so catching is fast.
   if (await api.ebirdKey()) loadNearby().then(() => { if (state.tab === 'dex') updateRegionLine(state.catches); migrationAlert(); });
-  if ('serviceWorker' in navigator) navigator.serviceWorker.register('./sw.js').catch(() => {});
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // A Home Screen app often resumes instead of reopening, so check for a new version whenever it comes back.
+      document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
+    }).catch(() => {});
+    // The app opens from its saved copy; when a new version has downloaded, switch to it at a calm moment.
+    let had = !!navigator.serviceWorker.controller;
+    navigator.serviceWorker.addEventListener('controllerchange', () => {
+      if (!had) { had = true; return; }
+      const reload = () => { if (!$('#layer').children.length) location.reload(); };
+      reload();
+      document.addEventListener('visibilitychange', () => { if (document.hidden) location.reload(); });
+      $('#layer').addEventListener('click', () => setTimeout(reload, 400));
+    });
+  }
 }
+
+// Nearby showed a saved copy; when the fresh one lands, redraw it in place.
+addEventListener('cache-refreshed', async e => {
+  if (!e.detail.startsWith('nearby2:') || !state.loc) return;
+  state.nearby = await api.nearbyData(state.loc);
+  if (state.tab === 'nearby' && !$('#layer').children.length) { const v = $('#view'), y = v.scrollTop; await renderNearby(); v.scrollTop = y; }
+});
 init();
 
 // Tapping the top edge of the screen scrolls the current page back to the top, like iOS apps do.

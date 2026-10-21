@@ -53,7 +53,7 @@ export async function cached(key, maxAgeMs, load, staleMs = 0) {
   if (age < maxAgeMs) return hit.v;
   const fresh = async () => { const v = await load(); await kv.set('cache:' + key, { at: Date.now(), v }); return v; };
   if (age < staleMs) {
-    if (!refreshing.has(key)) { refreshing.add(key); fresh().catch(() => {}).finally(() => refreshing.delete(key)); }
+    if (!refreshing.has(key)) { refreshing.add(key); fresh().then(() => dispatchEvent(new CustomEvent('cache-refreshed', { detail: key }))).catch(() => {}).finally(() => refreshing.delete(key)); }
     return hit.v;
   }
   try {

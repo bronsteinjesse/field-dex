@@ -91,9 +91,15 @@ img{max-width:100%;display:block}
 
 /* overlays */
 #layer:empty{display:none}
-.ov{position:fixed;top:0;left:0;right:0;height:100%;will-change:transform;z-index:20;display:flex;flex-direction:column;background:rgba(12,18,14,.92);backdrop-filter:blur(3px);-webkit-backdrop-filter:blur(3px);
+@keyframes ovfade{from{opacity:0}}
+@keyframes ovslide{from{opacity:.4;transform:translateX(28px)}}
+@media (prefers-reduced-motion:reduce){.ov{animation:none!important}}
+.grid .t,.nr{content-visibility:auto;contain-intrinsic-size:auto 120px}
+.nr{contain-intrinsic-size:auto 58px}
+button{touch-action:manipulation}
+.ov{position:fixed;top:0;left:0;right:0;height:100%;will-change:transform;z-index:20;display:flex;flex-direction:column;background:rgba(12,18,14,.95);animation:ovfade .16s ease-out;
   padding:calc(env(safe-area-inset-top) + 30px) max(14px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
-.ov.solid{background:var(--bg);background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:16px 16px}
+.ov.solid{animation:ovslide .2s ease-out;background:var(--bg);background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:16px 16px}
 .ov .scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tbox{background:var(--cream);color:var(--paper-ink);border-radius:3px;box-shadow:inset 0 0 0 2px var(--bark),inset 0 0 0 4px #c9a061;padding:12px 14px;font-family:var(--px);font-size:16px;line-height:1.35}
 .tbox small{display:block;font-family:var(--sans);font-size:12px;opacity:.7;margin-top:4px}
