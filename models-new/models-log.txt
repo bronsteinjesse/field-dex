@@ -1,0 +1,12 @@
+OK birdnet_fp16.tflite <- https://github.com/kahst/BirdNET-Analyzer/raw/v1.3.1/checkpoints/V2.4/BirdNET_GLOBAL_6K_V2.4_Model_FP16.tflite (25932528 bytes)
+OK aiy_birds.tflite <- https://tfhub.dev/google/lite-model/aiy/vision/classifier/birds_V1/3?lite-format=tflite (3561598 bytes)
+OK aiy_birds_labels.csv <- https://www.gstatic.com/aihub/tfhub/labelmaps/aiy_birds_V1_labelmap.csv (22386 bytes)
+aiy_birds.tflite:     Zip archive data, made by v2.0 UNIX, extract using at least v2.0, last modified, last modified Sun, Jul 28 2020 12:29:46, uncompressed size 18621, method=store
+aiy_birds_labels.csv: CSV Unicode text, UTF-8 text
+birdnet_fp16.tflite:  data
+total 28840
+drwxr-xr-x  2 runner runner     4096 Oct 21 11:19 .
+drwxr-xr-x 12 runner runner     4096 Oct 21 11:19 ..
+-rw-r--r--  1 runner runner  3561598 Oct 21 11:19 aiy_birds.tflite
+-rw-r--r--  1 runner runner    22386 Oct 21 11:19 aiy_birds_labels.csv
+-rw-r--r--  1 runner runner 25932528 Oct 21 11:19 birdnet_fp16.tflite
