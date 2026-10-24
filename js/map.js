@@ -43,26 +43,34 @@ export async function drawMap(el, points, onOpen) {
   return { show, map };
 }
 
-// Hotspot map: a dot per hotspot, bigger and brighter the more species were seen there in the last 7 days.
-// spots: [{ locId, name, lat, lng, count, latest, km }]; popupFor(spot) returns the popup element.
+// Hotspot map: a dot per hotspot, bigger the more species were seen there in the last 7 days.
+// spots: [{ locId, name, lat, lng, count, latest, km }]; popupFor(spot) returns the popup element. show(spots) redraws as more arrive.
 export async function drawHotspots(el, spots, me, popupFor) {
   const L = await loadLeaflet();
   const map = L.map(el, { zoomControl: false, attributionControl: true, tap: false });
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
-  const max = Math.max(1, ...spots.map(s => s.count));
-  const marks = {};
+  const layer = L.layerGroup().addTo(map);
   // Jesse's scale: red for 40+ species, yellow for 20-39, green under 20.
   const color = n => n >= 40 ? '#d64533' : n >= 20 ? '#e8c23a' : '#5fae5a';
-  for (const s of [...spots].reverse()) {
-    const f = s.count / max, size = Math.round(26 + 22 * f);
-    const m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'hs', html: `<span style="width:${size}px;height:${size}px;background:${color(s.count)};color:${s.count >= 40 ? '#fff' : '#1b140c'}">${s.count}</span>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] }) }).addTo(map);
-    m.bindPopup(() => popupFor(s), { closeButton: false });
-    marks[s.locId] = m;
-  }
-  if (me) L.marker([me.lat, me.lng], { icon: L.divIcon({ className: 'me', html: '<i></i>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false }).addTo(map);
-  const pts = spots.map(s => [s.lat, s.lng]).concat(me ? [[me.lat, me.lng]] : []);
-  if (pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [30, 30], maxZoom: 13 });
-  else if (pts.length) map.setView(pts[0], 12);
+  let marks = {}, framed = false;
+  const show = list => {
+    layer.clearLayers(); marks = {};
+    const max = Math.max(1, ...list.map(s => s.count));
+    for (const s of [...list].reverse()) {
+      const size = Math.round(24 + 22 * s.count / max);
+      const m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'hs', html: `<span style="width:${size}px;height:${size}px;background:${color(s.count)};color:${s.count >= 40 ? '#fff' : '#1b140c'}">${s.count}</span>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] }) }).addTo(layer);
+      m.bindPopup(() => popupFor(s), { closeButton: false });
+      marks[s.locId] = m;
+    }
+    // Frame the map once, around you and the closest spots, so it doesn't jump while more load.
+    if (!framed && (list.length || me)) {
+      framed = true;
+      const near = [...list].sort((a, b) => a.km - b.km).slice(0, 12).map(s => [s.lat, s.lng]).concat(me ? [[me.lat, me.lng]] : []);
+      if (near.length > 1) map.fitBounds(L.latLngBounds(near), { padding: [30, 30], maxZoom: 14 }); else map.setView(near[0], 13);
+    }
+  };
+  if (me) L.marker([me.lat, me.lng], { icon: L.divIcon({ className: 'me', html: '<i></i>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false, zIndexOffset: 1000 }).addTo(map);
+  show(spots);
   setTimeout(() => map.invalidateSize(), 50);
-  return { map, open: locId => { const m = marks[locId]; if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 12)); m.openPopup(); } } };
+  return { map, show, open: locId => { const m = marks[locId]; if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 14)); m.openPopup(); } } };
 }

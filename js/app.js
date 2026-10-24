@@ -883,15 +883,12 @@ async function openCatchMap(only) {
 // Where the most species have been seen in the last 7 days, on a map and as a ranked list.
 async function openHotspots() {
   const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">HOTSPOTS · 7 DAYS</span></div>
-    <div class="mapbox hot" id="hm"><p class="muted" style="padding:12px">Checking the busiest hotspots near ${esc(locLabel())}…</p></div>
+    <div class="mapbox hot" id="hm"></div><div class="muted hstat" id="hs">Checking hotspots near ${esc(locLabel())}…</div>
     <div class="scroll hotlist" id="hl"></div>`, 'solid');
   el.querySelector('[data-x]').onclick = () => el.remove();
+  const stat = el.querySelector('#hs'), hl = el.querySelector('#hl');
   const loc = await ensureLoc();
-  if (!loc) { el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">Pick a location first (📍 CHANGE on Nearby).</p>'; return; }
-  let spots;
-  try { spots = await api.hotspots7(loc); } catch { el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">Couldn\'t reach eBird right now. Check your signal.</p>'; return; }
-  if (!el.isConnected) return;
-  if (!spots.length) { el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">No hotspot reports within 30 km in the last 7 days.</p>'; return; }
+  if (!loc) { stat.textContent = 'Pick a location first (📍 CHANGE on Nearby).'; return; }
   const caught = new Set(state.catches.map(c => c.sci));
   const needs = s => s.species.filter(b => !caught.has(b.sci)).length;
   const popupFor = s => {
@@ -903,16 +900,29 @@ async function openHotspots() {
     d.querySelector('[data-a]').onclick = () => hotspotBirds(s, caught);
     return d;
   };
-  const hl = el.querySelector('#hl');
-  hl.innerHTML = `<div class="legend"><span><i style="background:#d64533"></i>40+ species</span><span><i style="background:#e8c23a"></i>20–39</span><span><i style="background:#5fae5a"></i>under 20</span></div><div class="lab">MOST SPECIES · LAST 7 DAYS</div>${spots.map((s, i) => `<button class="nr" data-i="${i}"><span class="hsn">${s.count}</span><div class="mid"><b>${esc(s.name)}</b><small>${s.km.toFixed(1)} km · ${needs(s)} you haven't caught · ${fmtDate(s.latest)}</small></div><span class="rw">›</span></button>`).join('')}`;
-  el.querySelector('#hm').innerHTML = '';
-  try {
-    const m = await (await import('./map.js')).drawHotspots(el.querySelector('#hm'), spots, loc, popupFor);
-    hl.querySelectorAll('.nr').forEach(b => b.onclick = () => m.open(spots[+b.dataset.i].locId));
-  } catch {
+  let m = null, spots = [];
+  const mapP = import('./map.js').then(mod => mod.drawHotspots(el.querySelector('#hm'), [], loc, popupFor)).then(x => (m = x)).catch(() => {
     el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">The map needs a connection the first time.</p>';
-    hl.querySelectorAll('.nr').forEach(b => b.onclick = () => hotspotBirds(spots[+b.dataset.i], caught));
-  }
+  });
+  const draw = (list, done, total) => {
+    if (!el.isConnected) return;
+    spots = list;
+    m?.show(list);
+    stat.textContent = total && done < total ? `Checked ${done} of ${total} hotspots… ${list.length} with ${api.HOT_MIN}+ species so far`
+      : `${list.length} hotspots with ${api.HOT_MIN}+ species in the last 7 days, within 30 km`;
+    hl.innerHTML = `<div class="legend"><span><i style="background:#d64533"></i>40+ species</span><span><i style="background:#e8c23a"></i>20–39</span><span><i style="background:#5fae5a"></i>10–19</span></div>
+      <input class="search" id="hq" type="search" placeholder="Search hotspots" autocomplete="off" value="${esc(el.dataset.q || '')}">
+      ${list.map((s, i) => `<button class="nr" data-i="${i}"><span class="hsn">${s.count}</span><div class="mid"><b>${esc(s.name)}</b><small>${s.km.toFixed(1)} km · ${needs(s)} you haven't caught · ${fmtDate(s.latest)}</small></div><span class="rw">›</span></button>`).join('')}`;
+    hl.querySelectorAll('.nr').forEach(b => b.onclick = () => { const s = spots[+b.dataset.i]; m ? m.open(s.locId) : hotspotBirds(s, caught); });
+    const q = hl.querySelector('#hq');
+    q.oninput = () => filterRows(hl, '.nr', el.dataset.q = q.value);
+    if (el.dataset.q) filterRows(hl, '.nr', el.dataset.q);
+  };
+  try {
+    const list = await api.hotspots7(loc, (part, done, total) => mapP.then(() => draw(part, done, total)));
+    await mapP; draw(list);
+    if (!list.length) stat.textContent = `No hotspots with ${api.HOT_MIN}+ species reported within 30 km in the last 7 days.`;
+  } catch { stat.textContent = 'Couldn\'t reach eBird right now. Check your signal.'; }
 }
 
 function hotspotBirds(s, caught) {

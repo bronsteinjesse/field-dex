@@ -93,25 +93,30 @@ export async function nearbyData(loc) {
   }, 24 * H);
 }
 
-// Hotspots with reports in the last 7 days, ranked by how many species were seen there (like eBird's Explore map).
-export async function hotspots7(loc) {
+// Every hotspot with 10+ species reported in the last 7 days (like eBird's Explore map).
+// eBird only gives species per hotspot one hotspot at a time, so this checks them 10 at a time, busiest first,
+// and reports progress so the map can fill in as it goes.
+export const HOT_MIN = 10;
+export async function hotspots7(loc, onProgress) {
   const k = `${round(loc.lat)},${round(loc.lng)}`;
-  return cached('hot7:' + k, 6 * H, async () => {
+  return cached('hot7b:' + k, 6 * H, async () => {
     const all = await eb(`/ref/hotspot/geo?lat=${loc.lat}&lng=${loc.lng}&dist=30&back=7&fmt=json`);
-    // Check the 30 busiest-looking spots (most species all-time, nearer first on ties).
-    const pick = all.map(h => ({ ...h, km: distKm(loc, h) }))
-      .sort((a, b) => (b.numSpeciesAllTime || 0) / (1 + b.km / 10) - (a.numSpeciesAllTime || 0) / (1 + a.km / 10)).slice(0, 30);
+    // A spot with fewer than 10 species ever can't have 10 this week, so skip it.
+    const pick = all.filter(h => (h.numSpeciesAllTime ?? HOT_MIN) >= HOT_MIN).map(h => ({ ...h, km: distKm(loc, h) }))
+      .sort((a, b) => (b.numSpeciesAllTime || 0) / (1 + b.km / 10) - (a.numSpeciesAllTime || 0) / (1 + a.km / 10)).slice(0, 250);
     const out = [];
     for (let i = 0; i < pick.length; i += 10) {
       const lists = await Promise.all(pick.slice(i, i + 10).map(h => eb(`/data/obs/${h.locId}/recent?back=7`).catch(() => [])));
       lists.forEach((list, j) => {
         const h = pick[i + j];
-        if (!list.length) return;
+        if (list.length < HOT_MIN) return;
         out.push({ locId: h.locId, name: h.locName, lat: h.lat, lng: h.lng, km: h.km, count: list.length, latest: list.map(o => o.obsDt).sort().pop(),
           species: list.map(o => ({ sci: o.sciName, name: o.comName, code: o.speciesCode, date: o.obsDt, n: o.howMany })) });
       });
+      out.sort((a, b) => b.count - a.count);
+      onProgress?.([...out], Math.min(pick.length, i + 10), pick.length);
     }
-    return out.sort((a, b) => b.count - a.count);
+    return out;
   }, 3 * DAY);
 }
 
