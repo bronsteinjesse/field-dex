@@ -234,6 +234,7 @@ async function renderNearby() {
     <span class="rw">+${tierOfChance(s.chance)}</span></button>`;
   v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr"><span><b>${toFind.length}</b> TO FIND</span></div></div>
     <div class="sub"><span>${state.nearby.spotCount} hotspots within 25 km · last 30 days</span><button id="refresh" class="close">↻</button></div>
+    <div class="tools"><button id="hotBtn">HOTSPOT MAP · 7 DAYS</button></div>
     <button class="locline" id="locBtn">📍 ${esc(locLabel())} <b>CHANGE</b></button>
     <input class="search" id="nearQ" type="search" placeholder="Search birds near you" autocomplete="off" value="${esc(state.nearQ || '')}">
     <div id="nearHits"></div>
@@ -246,6 +247,7 @@ async function renderNearby() {
     <div class="lab">STILL TO FIND</div>${toFind.map(s => row(s)).join('')}`;
   $('#refresh').onclick = async () => { await loadNearby(state.loc?.manual ? false : true); renderNearby(); };
   $('#locBtn').onclick = openLocation;
+  $('#hotBtn').onclick = openHotspots;
   // Searching shows matching birds near you (caught or not) in one list above everything else.
   const nq = v.querySelector('#nearQ'), hits = v.querySelector('#nearHits');
   const search = () => {
@@ -875,6 +877,52 @@ async function openCatchMap(only) {
     const m = await (await import('./map.js')).drawMap(el.querySelector('#mp'), filt(only), (sci, name) => openBird(sci, name));
     el.querySelector('#mf').onchange = e => { m.map.closePopup(); m.show(filt(e.target.value)); };
   } catch { el.querySelector('#mp').innerHTML = '<p class="muted" style="padding:12px">The map needs a connection the first time.</p>'; }
+}
+
+/* ---------- HOTSPOT MAP ---------- */
+// Where the most species have been seen in the last 7 days, on a map and as a ranked list.
+async function openHotspots() {
+  const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">HOTSPOTS · 7 DAYS</span></div>
+    <div class="mapbox hot" id="hm"><p class="muted" style="padding:12px">Checking the busiest hotspots near ${esc(locLabel())}…</p></div>
+    <div class="scroll hotlist" id="hl"></div>`, 'solid');
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  const loc = await ensureLoc();
+  if (!loc) { el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">Pick a location first (📍 CHANGE on Nearby).</p>'; return; }
+  let spots;
+  try { spots = await api.hotspots7(loc); } catch { el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">Couldn\'t reach eBird right now. Check your signal.</p>'; return; }
+  if (!el.isConnected) return;
+  if (!spots.length) { el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">No hotspot reports within 30 km in the last 7 days.</p>'; return; }
+  const caught = new Set(state.catches.map(c => c.sci));
+  const needs = s => s.species.filter(b => !caught.has(b.sci)).length;
+  const popupFor = s => {
+    const d = document.createElement('div'); d.className = 'mpop';
+    d.innerHTML = `<b></b><small></small><div class="row"><button class="btn" data-a="birds">SEE BIRDS</button><a class="btn alt" target="_blank" rel="noopener">DIRECTIONS</a></div>`;
+    d.querySelector('b').textContent = s.name;
+    d.querySelector('small').textContent = `${s.count} species · ${needs(s)} you haven't caught · ${s.km.toFixed(1)} km · last report ${fmtDate(s.latest)}`;
+    d.querySelector('a').href = `https://maps.apple.com/?daddr=${s.lat},${s.lng}&q=${encodeURIComponent(s.name)}`;
+    d.querySelector('[data-a]').onclick = () => hotspotBirds(s, caught);
+    return d;
+  };
+  const hl = el.querySelector('#hl');
+  hl.innerHTML = `<div class="lab">MOST SPECIES · LAST 7 DAYS</div>${spots.map((s, i) => `<button class="nr" data-i="${i}"><span class="hsn">${s.count}</span><div class="mid"><b>${esc(s.name)}</b><small>${s.km.toFixed(1)} km · ${needs(s)} you haven't caught · ${fmtDate(s.latest)}</small></div><span class="rw">›</span></button>`).join('')}`;
+  el.querySelector('#hm').innerHTML = '';
+  try {
+    const m = await (await import('./map.js')).drawHotspots(el.querySelector('#hm'), spots, loc, popupFor);
+    hl.querySelectorAll('.nr').forEach(b => b.onclick = () => m.open(spots[+b.dataset.i].locId));
+  } catch {
+    el.querySelector('#hm').innerHTML = '<p class="muted" style="padding:12px">The map needs a connection the first time.</p>';
+    hl.querySelectorAll('.nr').forEach(b => b.onclick = () => hotspotBirds(spots[+b.dataset.i], caught));
+  }
+}
+
+function hotspotBirds(s, caught) {
+  const birds = [...s.species].sort((a, b) => caught.has(a.sci) - caught.has(b.sci) || a.name.localeCompare(b.name));
+  const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="muted">${s.count} species · 7 days</span></div>
+    <div class="tbox">${esc(s.name)}<small>${s.km.toFixed(1)} km away · birds not in your dex are listed first</small></div>
+    <div class="scroll">${birds.map(b => `<button class="nr" data-sci="${esc(b.sci)}" data-name="${esc(b.name)}"><div class="ic">${icon(b.sci, b.name, caught.has(b.sci) ? undefined : { kind: 'sil', sil: '#45684f' })}</div><div class="mid"><b>${esc(b.name)}${caught.has(b.sci) ? '' : '<span class="tag">NEW</span>'}</b><small>${fmtDate(b.date)}${b.n ? ' · ' + b.n + ' seen' : ''}</small></div></button>`).join('')}
+    <a class="btn alt full" style="margin-top:10px" target="_blank" rel="noopener" href="https://ebird.org/hotspot/${esc(s.locId)}">OPEN IN EBIRD</a></div>`, 'solid');
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  el.querySelectorAll('[data-sci]').forEach(b => b.onclick = () => openBird(b.dataset.sci, b.dataset.name));
 }
 
 /* ---------- SETTINGS ---------- */

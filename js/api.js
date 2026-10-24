@@ -93,6 +93,28 @@ export async function nearbyData(loc) {
   }, 24 * H);
 }
 
+// Hotspots with reports in the last 7 days, ranked by how many species were seen there (like eBird's Explore map).
+export async function hotspots7(loc) {
+  const k = `${round(loc.lat)},${round(loc.lng)}`;
+  return cached('hot7:' + k, 6 * H, async () => {
+    const all = await eb(`/ref/hotspot/geo?lat=${loc.lat}&lng=${loc.lng}&dist=30&back=7&fmt=json`);
+    // Check the 30 busiest-looking spots (most species all-time, nearer first on ties).
+    const pick = all.map(h => ({ ...h, km: distKm(loc, h) }))
+      .sort((a, b) => (b.numSpeciesAllTime || 0) / (1 + b.km / 10) - (a.numSpeciesAllTime || 0) / (1 + a.km / 10)).slice(0, 30);
+    const out = [];
+    for (let i = 0; i < pick.length; i += 10) {
+      const lists = await Promise.all(pick.slice(i, i + 10).map(h => eb(`/data/obs/${h.locId}/recent?back=7`).catch(() => [])));
+      lists.forEach((list, j) => {
+        const h = pick[i + j];
+        if (!list.length) return;
+        out.push({ locId: h.locId, name: h.locName, lat: h.lat, lng: h.lng, km: h.km, count: list.length, latest: list.map(o => o.obsDt).sort().pop(),
+          species: list.map(o => ({ sci: o.sciName, name: o.comName, code: o.speciesCode, date: o.obsDt, n: o.howMany })) });
+      });
+    }
+    return out.sort((a, b) => b.count - a.count);
+  }, 3 * DAY);
+}
+
 async function checklistFrequency(county, loc) {
   if (!county) return null;
   const lists = await eb(`/product/lists/${county}?maxResults=200`);

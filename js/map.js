@@ -42,3 +42,27 @@ export async function drawMap(el, points, onOpen) {
   setTimeout(() => map.invalidateSize(), 50);
   return { show, map };
 }
+
+// Hotspot map: a dot per hotspot, bigger and brighter the more species were seen there in the last 7 days.
+// spots: [{ locId, name, lat, lng, count, latest, km }]; popupFor(spot) returns the popup element.
+export async function drawHotspots(el, spots, me, popupFor) {
+  const L = await loadLeaflet();
+  const map = L.map(el, { zoomControl: false, attributionControl: true, tap: false });
+  L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
+  const max = Math.max(1, ...spots.map(s => s.count));
+  const marks = {};
+  // Low counts fade into the map; the best spots glow gold.
+  const color = f => f > 0.66 ? '#e7c27e' : f > 0.33 ? '#c98b4a' : '#7a9a6a';
+  for (const s of [...spots].reverse()) {
+    const f = s.count / max, size = Math.round(26 + 22 * f);
+    const m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'hs', html: `<span style="width:${size}px;height:${size}px;background:${color(f)}">${s.count}</span>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] }) }).addTo(map);
+    m.bindPopup(() => popupFor(s), { closeButton: false });
+    marks[s.locId] = m;
+  }
+  if (me) L.marker([me.lat, me.lng], { icon: L.divIcon({ className: 'me', html: '<i></i>', iconSize: [16, 16], iconAnchor: [8, 8] }), interactive: false }).addTo(map);
+  const pts = spots.map(s => [s.lat, s.lng]).concat(me ? [[me.lat, me.lng]] : []);
+  if (pts.length > 1) map.fitBounds(L.latLngBounds(pts), { padding: [30, 30], maxZoom: 13 });
+  else if (pts.length) map.setView(pts[0], 12);
+  setTimeout(() => map.invalidateSize(), 50);
+  return { map, open: locId => { const m = marks[locId]; if (m) { map.setView(m.getLatLng(), Math.max(map.getZoom(), 12)); m.openPopup(); } } };
+}
