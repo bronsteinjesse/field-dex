@@ -30,6 +30,7 @@ export const catches = {
   all: () => tx('catches', 'readonly', s => s.getAll()),
   get: sci => tx('catches', 'readonly', s => s.get(sci)),
   put: c => tx('catches', 'readwrite', s => s.put(c)),
+  del: sci => tx('catches', 'readwrite', s => s.delete(sci)),
   clear: () => tx('catches', 'readwrite', s => s.clear()),
 };
 

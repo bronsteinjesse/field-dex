@@ -103,11 +103,14 @@ async function renderDex() {
     <div class="hdr"><div class="ttl">DEX</div><div class="ctr"><span>LV <b>${level(state.xp)}</b></span><span class="mini">${ballSvg()} <b>${list.length}</b></span></div></div>
     <div class="sub" id="regionLine">${region.line || ''}</div>
     <div class="tools"><button id="cardBtn">TRAINER CARD</button><button id="mapBtn">CATCH MAP</button></div>
+    ${list.length ? `<input class="search" id="dexQ" type="search" placeholder="Search your dex" autocomplete="off" value="${esc(state.dexQ || '')}">` : ''}
     ${list.length ? `<div class="grid">${list.map((c, i) => [c, i]).reverse().map(([c, i]) => `
       <button class="t" data-sci="${esc(c.sci)}"><div class="fig">${c.rare ? '<span class="shiny">✦</span>' : ''}${icon(c.sci, c.name)}<i class="gs"></i></div>
       <div class="no">No.${pad3(i + 1)}</div><div class="nm">${esc(c.name)}</div></button>`).join('')}</div>`
-    : `<div class="empty">${ballSvg()}<div class="ttl">No birds caught yet</div><div>Tap the ball to describe a bird you're looking at, or swipe it up to record a bird singing.</div></div>`}`;
+    : `<div class="empty">${ballSvg()}<div class="ttl">No birds caught yet</div><div>Swipe the ball up to catch a bird by song, photo, description or from the list.</div></div>`}`;
   v.querySelectorAll('.t').forEach(b => b.onclick = () => openBird(b.dataset.sci));
+  const q = v.querySelector('#dexQ');
+  if (q) { q.oninput = () => filterRows(v, '.grid .t', state.dexQ = q.value); filterRows(v, '.grid .t', state.dexQ); }
   $('#cardBtn').onclick = openTrainerCard;
   $('#mapBtn').onclick = () => openCatchMap();
   updateRegionLine(list);
@@ -130,6 +133,16 @@ async function updateRegionLine(list) {
     state.region = { line: parts.join(''), text: plain[0] };
     const el = $('#regionLine'); if (el && state.tab === 'dex') el.innerHTML = state.region.line;
   } catch { /* regional dex is a bonus */ }
+}
+
+// Hides rows whose name doesn't match; data-sci and the visible name are both searched.
+function filterRows(root, sel, q) {
+  q = (q || '').trim().toLowerCase();
+  let n = 0;
+  root.querySelectorAll(sel).forEach(r => { const hit = !q || r.textContent.toLowerCase().includes(q) || (r.dataset.sci || '').toLowerCase().includes(q); r.hidden = !hit; n += hit; });
+  let none = root.querySelector('.nohit');
+  if (!none) { none = document.createElement('p'); none.className = 'muted nohit'; root.querySelector(sel)?.parentElement?.after(none); }
+  none.textContent = q && !n ? `No birds match “${q}”.` : '';
 }
 
 /* ---------- NEARBY ---------- */
@@ -177,6 +190,8 @@ async function renderNearby() {
     <span class="rw">+${tierOfChance(s.chance)}</span></button>`;
   v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr"><span><b>${toFind.length}</b> TO FIND</span></div></div>
     <div class="sub"><span>Within 25 km · last 30 days · ${state.nearby.spotCount} hotspots checked</span><button id="refresh" class="close">↻</button></div>
+    <input class="search" id="nearQ" type="search" placeholder="Search birds near you" autocomplete="off" value="${esc(state.nearQ || '')}">
+    <div id="nearHits"></div>
     <div id="fcast"></div>
     <div class="lab">TODAY'S HUNT · ${hunt.filter(h => h.done).length} OF ${hunt.length} FOUND</div>
     <div class="hunt">${hunt.map(h => `<button class="hrow nr ${h.done ? 'done' : ''}" data-sci="${esc(h.sci)}" data-name="${esc(h.name)}"><div class="ic">${icon(h.sci, h.name, h.done ? undefined : { kind: 'sil', sil: '#0c1610' })}</div>
@@ -185,6 +200,18 @@ async function renderNearby() {
     ${rares.length ? `<div class="lab">RARE BIRDS NEARBY · THIS WEEK</div>${rares.map(r => `<button class="nr" data-sci="${esc(r.sci)}" data-name="${esc(r.name)}"><div class="ic">${icon(r.sci, r.name, { kind: 'sil', sil: '#45684f' })}</div><div class="mid"><b>${esc(r.name)}<span class="tag">RARE</span></b><small>${esc(r.obs.locName)}, ${r.km.toFixed(1)} km · ${fmtDate(r.obs.obsDt)}</small></div><span class="rw">+150</span></button>`).join('')}` : ''}
     <div class="lab">STILL TO FIND</div>${toFind.map(s => row(s)).join('')}`;
   $('#refresh').onclick = async () => { await loadNearby(true); renderNearby(); };
+  // Searching shows matching birds near you (caught or not) in one list above everything else.
+  const nq = v.querySelector('#nearQ'), hits = v.querySelector('#nearHits');
+  const search = () => {
+    const q = (state.nearQ = nq.value).trim().toLowerCase();
+    v.querySelectorAll(':scope > :not(.hdr):not(.sub):not(#nearQ):not(#nearHits)').forEach(x => x.hidden = !!q);
+    if (!q) { hits.innerHTML = ''; return; }
+    const all = [...state.nearby.species, ...state.nearby.notable.filter(r => !state.nearby.species.some(s => s.sci === r.sci)).map(r => ({ ...r, chance: 0.05 }))];
+    const f = all.filter(s => s.name.toLowerCase().includes(q) || s.sci.toLowerCase().includes(q));
+    hits.innerHTML = f.length ? f.slice(0, 40).map(s => row(s, caught.has(s.sci) ? '<span class="tag">CAUGHT</span>' : '')).join('') : `<p class="muted">No birds matching “${esc(q)}” reported near you lately.</p>`;
+    hits.querySelectorAll('[data-sci]').forEach(b => b.onclick = () => openBird(b.dataset.sci, b.dataset.name));
+  };
+  nq.oninput = search; if (state.nearQ) search();
   v.querySelectorAll('[data-sci]').forEach(b => b.onclick = () => openBird(b.dataset.sci, b.dataset.name));
   renderMoves(caught);
   renderForecast();
@@ -278,8 +305,17 @@ async function openBird(sci, nameHint) {
         <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>
         <button class="btn full" id="quickCatch" style="margin-top:10px">${c ? 'SEEN IT AGAIN' : 'I SEE IT · CATCH'}</button>
         ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}
+        ${c ? `<div class="lab">YOUR SIGHTINGS</div>${[...c.sightings].reverse().map(s => `<div class="sight"><span>${fmtDate(s.date)} · ${({ voice: 'described', sound: 'by song', photo: 'by photo', list: 'from list', import: 'imported' })[s.method] || s.method || ''}</span><button class="close" data-del="${esc(s.date)}">✕ REMOVE</button></div>`).join('')}` : ''}
         ${SPRITES[slug(sci)] ? `<div class="credit">Sprite traced from a photo: ${esc(SPRITES[slug(sci)])}</div>` : ''}`;
       body.querySelector('#onMap')?.addEventListener('click', () => openCatchMap(sci));
+      body.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
+        const last = c.sightings.length === 1;
+        if (!confirm(last ? `Remove ${name} from your dex?` : 'Remove this sighting?')) return;
+        await removeSighting(sci, b.dataset.del);
+        hush(); el.remove();
+        if (!last) openBird(sci, name);
+        toast(last ? `${name} was taken out of your dex.` : 'Sighting removed.');
+      });
       body.querySelector('#quickCatch').onclick = () => { hush(); el.remove(); loadNearby(); ensureLoc(); gotcha({ sci, name, code: c?.code || state.nearby?.species.find(s => s.sci === sci)?.code, pct: 90 }, { method: 'list' }); };
       body.querySelector('#spk').onclick = e => {
         const b = e.currentTarget;
@@ -405,6 +441,24 @@ function startTalk(extra = '') {
   if (!el.querySelector('#typeBox').hidden && !text) said.hidden = true;
 }
 
+/* ---------- CATCH MENU ---------- */
+// Swiping the ball up offers every way to catch a bird.
+function openCatchMenu() {
+  loadNearby(); ensureLoc();
+  const el = overlay(`<div class="topbar"><button class="close" data-x>✕ CANCEL</button><span class="muted">Catch a bird</span></div>
+    <div class="cmenu">
+      <button data-go="listen"><b>LISTEN</b><small>Hear what's singing</small></button>
+      <button data-go="photo"><b>PHOTO</b><small>Take or pick a photo</small></button>
+      <button data-go="describe"><b>DESCRIBE</b><small>Say or type what you see</small></button>
+      <button data-go="list"><b>PICK FROM LIST</b><small>Search every bird</small></button>
+    </div>`);
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  el.querySelectorAll('[data-go]').forEach(b => b.onclick = () => {
+    el.remove();
+    ({ listen: startListen, photo: () => takePhoto(), describe: () => startTalk(), list: () => pickFromList({ method: 'list' }) })[b.dataset.go]();
+  });
+}
+
 /* ---------- CATCH: photo ---------- */
 function takePhoto(said = '') {
   const inp = document.createElement('input');
@@ -460,7 +514,7 @@ async function shrink(file, max) {
 async function startListen() {
   loadNearby(); ensureLoc();
   const el = overlay(`<div class="topbar"><button class="close" id="backBtn">✕ CANCEL</button><span class="muted">By song</span></div>
-    <div class="tbox"><span class="listen-dot"></span>LISTENING FOR BIRDS…<small>Stay quiet and point your phone toward the song. Tap anywhere to stop.</small></div>
+    <div class="tbox"><span class="listen-dot"></span>LISTENING FOR BIRDS…<small>Point your phone toward the song. Tap a bird to check it, or tap anywhere else to stop.</small></div>
     <canvas class="spec" width="160" height="80" style="margin-top:10px"></canvas>
     <div id="load" class="muted" style="margin-top:8px"></div><div class="prog" id="prog" hidden><i></i></div>
     <div class="lab">HEARD SO FAR</div><div id="heard" class="muted">Nothing yet…</div>`);
@@ -480,9 +534,32 @@ async function startListen() {
   })();
   const draw = () => {
     const rows = tracker.list(), span = Math.max(15, tracker.latest + 3);
-    el.querySelector('#heard').innerHTML = rows.length ? rows.slice(0, 8).map(b => `<div class="nr heardrow${b.now ? ' now' : ''}"><div class="ic">${icon(b.sci, b.name)}</div><div class="mid"><b>${esc(b.name)}</b>
-      <div class="tl">${b.times.map(t => `<i style="left:${(t / span * 100).toFixed(1)}%;width:${(3 / span * 100).toFixed(1)}%"></i>`).join('')}</div></div><span class="rw">${b.now ? 'SINGING' : Math.round(b.p * 100) + '%'}</span></div>`).join('') : 'Nothing yet…';
+    shown = rows.slice(0, 8);
+    el.querySelector('#heard').innerHTML = shown.length ? shown.map((b, i) => `<button class="nr heardrow${b.now ? ' now' : ''}" data-i="${i}"><div class="ic ph">${thumbs.get(b.sci) ? `<img src="${esc(thumbs.get(b.sci))}" alt="">` : icon(b.sci, b.name)}</div><div class="mid"><b>${esc(b.name)}</b>
+      <div class="tl">${b.times.map(t => `<i style="left:${(t / span * 100).toFixed(1)}%;width:${(3 / span * 100).toFixed(1)}%"></i>`).join('')}</div></div><span class="rw">${b.now ? 'SINGING' : Math.round(b.p * 100) + '%'}</span></button>`).join('') : 'Nothing yet…';
+    // Real photos for each bird heard, fetched once.
+    for (const b of shown) if (!thumbs.has(b.sci)) { thumbs.set(b.sci, null); api.thumbFor(b.sci).then(u => { if (u) { thumbs.set(b.sci, u); if (el.isConnected) draw(); } }); }
   };
+  let shown = [];
+  const thumbs = new Map();
+  const asCand = x => {
+    const n = state.nearby?.species.find(s => s.sci === x.sci);
+    const where = n ? `reported at ${Math.round(n.chance * 100)}% of spots near you` : x.tier === 'county' ? 'recorded in your county, not lately' : x.tier === 'none' ? 'never recorded in your county' : 'not reported nearby lately';
+    return { sci: x.sci, name: n?.name || x.name, code: n?.code, chance: n?.chance, pct: Math.round(x.p * 100), why: [`song match ${Math.round(x.p * 100)}%${x.hits > 1 ? `, heard ${x.hits} times` : ''}`, where] };
+  };
+  // Tap a bird while it's still listening: check its photos, BACK keeps listening, THAT'S IT stops and catches it.
+  el.querySelector('#heard').addEventListener('click', e => {
+    const row = e.target.closest('.heardrow'); if (!row || stopping) return;
+    e.stopPropagation();
+    checkBird(shown.map(asCand), +row.dataset.i, { method: 'sound' }, {
+      confirm: async c => {
+        stopping = true;
+        const res = await session.stop();
+        el.remove();
+        gotcha(c, { method: 'sound', audio: await photos.add(res.audio) }, true);
+      },
+    });
+  });
   try {
     session = await sound.listen(u => {
       if (u.spectrum) {
@@ -493,7 +570,7 @@ async function startListen() {
           g.fillStyle = `rgb(${20 + 211 * v},${32 + 162 * v},${26 + 100 * v})`; g.fillRect(cv.width - 1, y, 1, 1);
         }
       }
-      if (u.loading != null && u.loading < 1) { el.querySelector('#prog').hidden = false; el.querySelector('#prog i').style.width = (u.loading * 100) + '%'; el.querySelector('#load').textContent = 'First time only: downloading the bird-song model (about 50 MB)…'; }
+      if (u.loading != null && u.loading < 1) { el.querySelector('#prog').hidden = false; el.querySelector('#prog i').style.width = (u.loading * 100) + '%'; el.querySelector('#load').textContent = 'First time only: downloading the bird-song model (about 26 MB)…'; }
       if (u.loading === 1) { el.querySelector('#prog').hidden = true; el.querySelector('#load').textContent = ''; }
       if (u.error) el.querySelector('#load').textContent = 'Sound ID hit a problem: ' + u.error;
       if (u.window) { windows.push(u.window); tracker.add(u.window.t, u.window.res); draw(); }
@@ -510,13 +587,8 @@ async function startListen() {
     if (res.tail) tracker.add(tracker.latest + 1.5, res.tail);
     const d = tracker.ranked();
     const audioId = await photos.add(res.audio);
-    if (!d.length) { toast('No bird song recognized. Try closer, or tap the ball to describe it.'); return; }
-    const cands = d.slice(0, 4).map(x => {
-      const n = state.nearby?.species.find(s => s.sci === x.sci);
-      const where = n ? `reported at ${Math.round(n.chance * 100)}% of spots near you` : x.tier === 'county' ? 'recorded in your county, not lately' : x.tier === 'none' ? 'never recorded in your county' : 'not reported nearby lately';
-      return { sci: x.sci, name: n?.name || x.name, code: n?.code, chance: n?.chance, pct: Math.round(x.p * 100), why: [`song match ${Math.round(x.p * 100)}%${x.hits > 1 ? `, heard ${x.hits} times` : ''}`, where] };
-    });
-    showCandidates(cands, { method: 'sound', audio: audioId });
+    if (!d.length) { toast('No bird song recognized. Try closer, or swipe the ball up to describe it.'); return; }
+    showCandidates(d.slice(0, 8).map(asCand), { method: 'sound', audio: audioId });
   });
 }
 
@@ -598,7 +670,7 @@ function checkBird(list, i, ctx, from = {}) {
   el.querySelector('#prev')?.addEventListener('click', () => step(-1));
   el.querySelector('#next')?.addEventListener('click', () => step(1));
   // You looked and said yes, so it's caught; the wobbles still show how sure the match was.
-  el.querySelector('#yes').onclick = () => { el.remove(); from.done?.(); gotcha(list[i], ctx, true); };
+  el.querySelector('#yes').onclick = () => { el.remove(); if (from.confirm) return from.confirm(list[i]); from.done?.(); gotcha(list[i], ctx, true); };
   el.querySelector('#nope').onclick = () => {
     if (list.length < 2) { el.remove(); return; }
     from.reject?.(i);
@@ -659,7 +731,8 @@ function gotcha(c, ctx, forced = false) {
     const res = await saveCatch(c, ctx);
     msg.innerHTML = `Gotcha! ${esc(c.name)} was caught!`;
     el.querySelector('#after').innerHTML = `<div class="reg">${icon(c.sci, c.name)}<div><b>${res.isNew ? `No.${pad3(res.no)} registered` : `Seen again · ${res.count}×`}</b><small>+${res.xp} XP · ${res.tier}${res.levelUp ? ` · LEVEL UP! LV ${res.level}` : ''}${res.badge ? `<br>${res.badge} BADGE EARNED! See it on your trainer card.` : ''}<br>${ctx.photo ? 'Your photo was saved to its Photos tab.' : ctx.audio ? 'Your recording was saved to its Song tab.' : ''}</small></div></div>
-      <div class="capfoot" style="margin-top:12px"><div class="row"><button class="btn" id="viewEntry">VIEW ENTRY</button><button class="btn alt" id="ok">DONE</button></div></div>`;
+      <div class="capfoot" style="margin-top:12px"><div class="row"><button class="btn" id="viewEntry">VIEW ENTRY</button><button class="btn alt" id="ok">DONE</button></div><button class="btn alt full" id="undo">↶ UNDO, WRONG BIRD</button></div>`;
+    el.querySelector('#undo').onclick = async () => { await removeSighting(c.sci, res.date); el.remove(); toast(`Undone. ${c.name} ${res.isNew ? 'was taken out of your dex' : 'sighting removed'}.`); };
     el.querySelector('#viewEntry').onclick = () => { el.remove(); openBird(c.sci, c.name); };
     el.querySelector('#ok').onclick = () => el.remove();
   };
@@ -680,13 +753,26 @@ async function saveCatch(c, ctx) {
   else rec = { sci: c.sci, name: c.name, code: c.code || state.nearby?.species.find(s => s.sci === c.sci)?.code || null, first: sighting.date, count: 1, sightings: [sighting], hab: habitatOf(c.sci, c.name), rare: !!tier.rare };
   await catches.put(rec);
   const gain = isNew ? tier.xp : Math.round(tier.xp / 4);
+  sighting.xp = gain; await catches.put(rec);
   const before = level(state.xp), had = earned(state.catches);
   state.xp += gain; await kv.set('xp', state.xp);
   state.catches = await catches.all();
   const no = [...state.catches].sort((a, b) => a.first.localeCompare(b.first)).findIndex(x => x.sci === c.sci) + 1;
   render();
   const badge = earned(state.catches).find(b => !had.includes(b));
-  return { isNew, no, count: rec.count, xp: gain, tier: tier.name, level: level(state.xp), levelUp: level(state.xp) > before, badge };
+  return { date: sighting.date, isNew, no, count: rec.count, xp: gain, tier: tier.name, level: level(state.xp), levelUp: level(state.xp) > before, badge };
+}
+
+// Takes back one sighting (and its XP); the bird leaves the dex when it was the only one.
+async function removeSighting(sci, date) {
+  const rec = await catches.get(sci); if (!rec) return;
+  const s = rec.sightings.find(x => x.date === date);
+  rec.sightings = rec.sightings.filter(x => x !== s);
+  if (s?.xp) { state.xp = Math.max(0, state.xp - s.xp); await kv.set('xp', state.xp); }
+  if (!rec.sightings.length) await catches.del(sci);
+  else { rec.count = rec.sightings.length; rec.first = rec.sightings.map(x => x.date).sort()[0]; await catches.put(rec); }
+  state.catches = await catches.all();
+  render();
 }
 
 /* ---------- TRAINER CARD ---------- */
@@ -863,7 +949,7 @@ function bindBall() {
     if (y0 == null) return;
     b.classList.remove('drag'); b.style.transform = '';
     const up = dy < -60; y0 = null;
-    if (up) startListen(); else if (!moved) startTalk();
+    if (up) openCatchMenu(); else if (!moved) { toast('Swipe the ball up to catch a bird.', 1800); b.classList.add('nudge'); setTimeout(() => b.classList.remove('nudge'), 600); }
   };
   b.addEventListener('pointerup', end); b.addEventListener('pointercancel', () => { y0 = null; b.classList.remove('drag'); b.style.transform = ''; });
 }
