@@ -35,6 +35,13 @@ export function getLocation() {
   });
 }
 
+// Place search for picking a location by hand (Open-Meteo geocoding: free, no key).
+export async function findPlace(q) {
+  const r = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${encodeURIComponent(q)}&count=8&language=en&format=json`);
+  if (!r.ok) throw new Error('PLACE');
+  return ((await r.json()).results || []).map(p => ({ name: p.name, area: [p.admin2, p.admin1, p.country].filter(Boolean).join(', '), lat: p.latitude, lng: p.longitude }));
+}
+
 // Everything the Nearby page and the matcher need, for one spot.
 // "chance" = share of nearby active hotspots that reported the species in the last 30 days.
 export async function nearbyData(loc) {

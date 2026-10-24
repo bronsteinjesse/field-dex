@@ -53,9 +53,21 @@ function tierOf(sci) {
   return { name: 'Scarce', xp: 80 };
 }
 
-async function ensureLoc() {
-  if (state.loc) return state.loc;
-  try { state.loc = await api.getLocation(); } catch { state.loc = null; }
+// iPhone Home Screen apps forget the location permission every launch, so asking on open means a prompt every time.
+// Instead reuse the last spot we saved, and only ask again when it's stale for what you're doing
+// (Nearby: any saved spot is fine until you tap ↻; a catch: within the last 2 hours) or when you tap ↻.
+async function ensureLoc({ fresh = false, maxAge = Infinity } = {}) {
+  if (state.loc && !fresh && Date.now() - (state.loc.at || 0) < maxAge) return state.loc;
+  const saved = await kv.get('lastLoc');
+  let granted = false;
+  try { granted = (await navigator.permissions?.query({ name: 'geolocation' }))?.state === 'granted'; } catch {}
+  if (!fresh && saved?.manual) return (state.loc = saved);
+  if (!fresh && !granted && saved && Date.now() - saved.at < maxAge) return (state.loc = saved);
+  try {
+    const p = await api.getLocation();
+    state.loc = { ...p, at: Date.now() };
+    kv.set('lastLoc', state.loc);
+  } catch { state.loc = saved || null; }
   return state.loc;
 }
 
@@ -64,7 +76,7 @@ async function loadNearby(force) {
   state.nearbyErr = null;
   document.body.classList.add('busy');
   try {
-    const loc = await ensureLoc();
+    const loc = await ensureLoc({ fresh: !!force });
     if (!loc) throw new Error('GEO_DENIED');
     state.nearby = await api.nearbyData(loc);
   } catch (e) { state.nearbyErr = e.message; }
@@ -145,6 +157,38 @@ function filterRows(root, sel, q) {
   none.textContent = q && !n ? `No birds match “${q}”.` : '';
 }
 
+const locLabel = () => !state.loc ? 'No location yet' : state.loc.manual ? state.loc.name
+  : Date.now() - (state.loc.at || 0) > 3600e3 ? `Where you were ${fmtDate(new Date(state.loc.at).toISOString())}` : 'Where you are now';
+
+// Change the spot Nearby, catches and the forecast use: your phone's location, or any town you search for.
+function openLocation() {
+  const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="muted">Location</span></div>
+    <div class="card"><p class="muted">Now using: <b>${esc(locLabel())}</b></p><button class="btn full" id="gps">📍 USE WHERE I AM NOW</button></div>
+    <div class="card"><h3>OR PICK A PLACE</h3><input id="placeQ" type="search" placeholder="Town, park or zip code" autocomplete="off"><div id="places" class="list" style="margin-top:8px"></div></div>`, 'solid');
+  el.querySelector('[data-x]').onclick = () => el.remove();
+  const use = async loc => {
+    state.loc = loc; await kv.set('lastLoc', loc);
+    state.nearby = null; el.remove();
+    toast(loc.manual ? `Using ${loc.name}.` : 'Using where you are now.');
+    await loadNearby(); render();
+  };
+  el.querySelector('#gps').onclick = async () => {
+    try { const p = await api.getLocation(); use({ ...p, at: Date.now() }); }
+    catch { toast('Location is off for this app. Turn it on in Settings → Privacy → Location Services → Safari Websites.'); }
+  };
+  let t;
+  el.querySelector('#placeQ').oninput = e => {
+    clearTimeout(t); const q = e.target.value.trim(), box = el.querySelector('#places');
+    if (q.length < 2) { box.innerHTML = ''; return; }
+    t = setTimeout(async () => {
+      const res = await api.findPlace(q).catch(() => null);
+      if (!res) { box.innerHTML = '<p class="muted">Couldn\'t search right now. Check your signal.</p>'; return; }
+      box.innerHTML = res.length ? res.map((r, i) => `<button class="nr" data-i="${i}"><div class="mid"><b>${esc(r.name)}</b><small>${esc(r.area)}</small></div></button>`).join('') : '<p class="muted">No places found.</p>';
+      box.querySelectorAll('.nr').forEach(b => b.onclick = () => { const r = res[+b.dataset.i]; use({ lat: r.lat, lng: r.lng, at: Date.now(), name: r.name, manual: true }); });
+    }, 300);
+  };
+}
+
 /* ---------- NEARBY ---------- */
 function seeded(seed) { let h = 2166136261; for (const c of seed) h = Math.imul(h ^ c.charCodeAt(0), 16777619); return () => ((h = Math.imul(h ^ (h >>> 15), 2246822507) >>> 0) / 4294967296); }
 
@@ -189,7 +233,8 @@ async function renderNearby() {
     <div class="mid"><b>${esc(s.name)}${extra}</b><div class="bar"><i style="width:${Math.max(3, Math.round(s.chance * 100))}%"></i></div><small>${Math.round(s.chance * 100)}% chance · ${HAB_WORD[habitatOf(s.sci, s.name)]} · ${(s.nearKm ?? s.best?.km ?? s.lastKm).toFixed(1)} km</small></div>
     <span class="rw">+${tierOfChance(s.chance)}</span></button>`;
   v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr"><span><b>${toFind.length}</b> TO FIND</span></div></div>
-    <div class="sub"><span>Within 25 km · last 30 days · ${state.nearby.spotCount} hotspots checked</span><button id="refresh" class="close">↻</button></div>
+    <div class="sub"><span>${state.nearby.spotCount} hotspots within 25 km · last 30 days</span><button id="refresh" class="close">↻</button></div>
+    <button class="locline" id="locBtn">📍 ${esc(locLabel())} <b>CHANGE</b></button>
     <input class="search" id="nearQ" type="search" placeholder="Search birds near you" autocomplete="off" value="${esc(state.nearQ || '')}">
     <div id="nearHits"></div>
     <div id="fcast"></div>
@@ -199,7 +244,8 @@ async function renderNearby() {
     <div id="moves"></div>
     ${rares.length ? `<div class="lab">RARE BIRDS NEARBY · THIS WEEK</div>${rares.map(r => `<button class="nr" data-sci="${esc(r.sci)}" data-name="${esc(r.name)}"><div class="ic">${icon(r.sci, r.name, { kind: 'sil', sil: '#45684f' })}</div><div class="mid"><b>${esc(r.name)}<span class="tag">RARE</span></b><small>${esc(r.obs.locName)}, ${r.km.toFixed(1)} km · ${fmtDate(r.obs.obsDt)}</small></div><span class="rw">+150</span></button>`).join('')}` : ''}
     <div class="lab">STILL TO FIND</div>${toFind.map(s => row(s)).join('')}`;
-  $('#refresh').onclick = async () => { await loadNearby(true); renderNearby(); };
+  $('#refresh').onclick = async () => { await loadNearby(state.loc?.manual ? false : true); renderNearby(); };
+  $('#locBtn').onclick = openLocation;
   // Searching shows matching birds near you (caught or not) in one list above everything else.
   const nq = v.querySelector('#nearQ'), hits = v.querySelector('#nearHits');
   const search = () => {
@@ -742,7 +788,8 @@ function gotcha(c, ctx, forced = false) {
 }
 
 async function saveCatch(c, ctx) {
-  const loc = state.loc;
+  // Tag the sighting with where you are; a saved spot from the last 2 hours is close enough without asking again.
+  const loc = await ensureLoc({ maxAge: 2 * 3600e3 }).catch(() => state.loc);
   const tier = tierOf(c.sci);
   let photoId = null;
   if (ctx.photo) photoId = await photos.add(ctx.photo);
@@ -836,16 +883,18 @@ async function openSettings() {
   const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="ttl" style="font-size:16px">SETTINGS</span></div><div class="scroll">
     <div class="card"><h3>EBIRD KEY</h3><p class="muted">Free from <a href="https://ebird.org/api/keygen" target="_blank" rel="noopener">ebird.org/api/keygen</a>. Stays on this phone.</p>
       <input id="k" value="${esc(key)}" placeholder="Paste your eBird key" autocomplete="off" autocapitalize="off" spellcheck="false"><div style="height:8px"></div><button class="btn full" id="ks">SAVE</button></div>
+    <div class="card"><h3>LOCATION</h3><p class="muted">${esc(locLabel())}</p><button class="btn alt full" id="locSet">CHANGE LOCATION</button></div>
     <div class="card"><h3>IMPORT A LIFE LIST</h3><p class="muted">On eBird, open My eBird → Life list → Download (CSV). Pick that file here and every species on it is added as caught.</p>
       <div class="row"><button class="btn" id="paste">PASTE LIST</button><button class="btn alt" id="imp">CHOOSE FILE</button></div>
       <div id="pasteBox" hidden style="margin-top:8px"><textarea id="pasteIn" rows="4" placeholder="Paste the list here"></textarea><div style="height:8px"></div><button class="btn full" id="pasteGo">IMPORT</button></div></div>
     <div class="card"><h3>BACKUP</h3><p class="muted">Your dex lives only on this phone. Save a backup now and then.</p>
       <div class="row"><button class="btn" id="exp">SAVE BACKUP</button><button class="btn alt" id="res">RESTORE</button></div></div>
-    <div class="card"><h3>SOUND ID</h3><p class="muted">The bird-song model downloads the first time you swipe up (about 50 MB), then works offline.</p><button class="btn alt full" id="pre">DOWNLOAD IT NOW</button><div class="prog" id="pp" hidden><i></i></div></div>
+    <div class="card"><h3>SOUND ID</h3><p class="muted">The bird-song model downloads the first time you use LISTEN (about 26 MB), then works offline.</p><button class="btn alt full" id="pre">DOWNLOAD IT NOW</button><div class="prog" id="pp" hidden><i></i></div></div>
     <div class="card"><h3>CREDITS</h3><p class="muted">Sightings: eBird, Cornell Lab of Ornithology. Photos, sounds and descriptions: iNaturalist contributors (credited on each photo) and Wikipedia. Sound ID: BirdNET by the K. Lisa Yang Center for Conservation Bioacoustics and TU Chemnitz (CC BY-NC-SA 4.0), run with LiteRT.js.</p>
       <p class="muted">LV ${level(state.xp)} · ${state.xp} XP · ${state.catches.length} caught</p></div></div>`, 'solid');
   el.querySelector('[data-x]').onclick = () => el.remove();
   el.querySelector('#ks').onclick = async () => { await kv.set('ebirdKey', el.querySelector('#k').value.trim()); state.nearby = null; toast('Key saved'); render(); };
+  el.querySelector('#locSet').onclick = () => { el.remove(); openLocation(); };
   el.querySelector('#imp').onclick = () => pickFile('.csv,.txt,text/csv,text/plain', importCsv);
   el.querySelector('#paste').onclick = async () => {
     const box = el.querySelector('#pasteBox'), inp = el.querySelector('#pasteIn');
