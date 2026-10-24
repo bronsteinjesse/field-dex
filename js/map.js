@@ -51,11 +51,11 @@ export async function drawHotspots(el, spots, me, popupFor) {
   L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap' }).addTo(map);
   const max = Math.max(1, ...spots.map(s => s.count));
   const marks = {};
-  // Low counts fade into the map; the best spots glow gold.
-  const color = f => f > 0.66 ? '#e7c27e' : f > 0.33 ? '#c98b4a' : '#7a9a6a';
+  // Jesse's scale: red for 40+ species, yellow for 20-39, green under 20.
+  const color = n => n >= 40 ? '#d64533' : n >= 20 ? '#e8c23a' : '#5fae5a';
   for (const s of [...spots].reverse()) {
     const f = s.count / max, size = Math.round(26 + 22 * f);
-    const m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'hs', html: `<span style="width:${size}px;height:${size}px;background:${color(f)}">${s.count}</span>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] }) }).addTo(map);
+    const m = L.marker([s.lat, s.lng], { icon: L.divIcon({ className: 'hs', html: `<span style="width:${size}px;height:${size}px;background:${color(s.count)};color:${s.count >= 40 ? '#fff' : '#1b140c'}">${s.count}</span>`, iconSize: [size, size], iconAnchor: [size / 2, size / 2] }) }).addTo(map);
     m.bindPopup(() => popupFor(s), { closeButton: false });
     marks[s.locId] = m;
   }

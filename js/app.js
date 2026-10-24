@@ -904,7 +904,7 @@ async function openHotspots() {
     return d;
   };
   const hl = el.querySelector('#hl');
-  hl.innerHTML = `<div class="lab">MOST SPECIES · LAST 7 DAYS</div>${spots.map((s, i) => `<button class="nr" data-i="${i}"><span class="hsn">${s.count}</span><div class="mid"><b>${esc(s.name)}</b><small>${s.km.toFixed(1)} km · ${needs(s)} you haven't caught · ${fmtDate(s.latest)}</small></div><span class="rw">›</span></button>`).join('')}`;
+  hl.innerHTML = `<div class="legend"><span><i style="background:#d64533"></i>40+ species</span><span><i style="background:#e8c23a"></i>20–39</span><span><i style="background:#5fae5a"></i>under 20</span></div><div class="lab">MOST SPECIES · LAST 7 DAYS</div>${spots.map((s, i) => `<button class="nr" data-i="${i}"><span class="hsn">${s.count}</span><div class="mid"><b>${esc(s.name)}</b><small>${s.km.toFixed(1)} km · ${needs(s)} you haven't caught · ${fmtDate(s.latest)}</small></div><span class="rw">›</span></button>`).join('')}`;
   el.querySelector('#hm').innerHTML = '';
   try {
     const m = await (await import('./map.js')).drawHotspots(el.querySelector('#hm'), spots, loc, popupFor);
