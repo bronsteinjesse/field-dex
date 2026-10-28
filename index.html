@@ -12,10 +12,15 @@
 <link rel="manifest" href="manifest.webmanifest">
 <link rel="apple-touch-icon" href="icons/icon-180.png">
 <link rel="icon" href="icons/icon-192.png">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Pixelify+Sans:wght@500;700&family=Figtree:wght@400;600;700&display=swap" media="print" onload="this.media='all'">
+<link rel="preload" href="fonts/pixelify-sans-latin-500-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/figtree-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/figtree-latin-600-normal.woff2" as="font" type="font/woff2" crossorigin>
 <link rel="stylesheet" href="style.css">
+<!-- Fetch every module at once instead of one import at a time. -->
+<link rel="modulepreload" href="js/app.js"><link rel="modulepreload" href="js/data.js"><link rel="modulepreload" href="js/bird.js"><link rel="modulepreload" href="js/store.js">
+<link rel="modulepreload" href="js/api.js"><link rel="modulepreload" href="js/match.js"><link rel="modulepreload" href="js/marks.js"><link rel="modulepreload" href="js/sound.js">
+<link rel="modulepreload" href="js/forecast.js"><link rel="modulepreload" href="js/sprites.js"><link rel="modulepreload" href="js/songid.js"><link rel="modulepreload" href="js/photo.js">
+<link rel="modulepreload" href="js/lite.js"><link rel="modulepreload" href="js/looks.js">
 </head>
 <body>
 <div id="app">
@@ -25,6 +30,7 @@
     <button class="brand" id="settingsBtn" aria-label="Settings">FIELD DEX ⚙︎</button>
   </header>
   <main id="view"></main>
+  <script>try { var s = localStorage.getItem('dexSnap'); if (s) document.getElementById('view').innerHTML = s; } catch (e) {}</script>
   <nav class="tabs">
     <button id="tabDex" class="on">DEX</button>
     <div class="ballwrap">

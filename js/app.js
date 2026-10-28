@@ -116,8 +116,8 @@ async function renderDex() {
     <div class="sub" id="regionLine">${region.line || ''}</div>
     <div class="tools"><button id="cardBtn">TRAINER CARD</button><button id="mapBtn">CATCH MAP</button></div>
     ${list.length ? `<input class="search" id="dexQ" type="search" placeholder="Search your dex" autocomplete="off" value="${esc(state.dexQ || '')}">` : ''}
-    ${list.length ? `<div class="grid">${list.map((c, i) => [c, i]).reverse().map(([c, i]) => `
-      <button class="t" data-sci="${esc(c.sci)}"><div class="fig">${c.rare ? '<span class="shiny">✦</span>' : ''}${icon(c.sci, c.name)}<i class="gs"></i></div>
+    ${list.length ? `<div class="grid">${list.map((c, i) => [c, i]).reverse().map(([c, i], n) => `
+      <button class="t" data-sci="${esc(c.sci)}"><div class="fig">${c.rare ? '<span class="shiny">✦</span>' : ''}${n < 30 ? icon(c.sci, c.name).replace(' loading="lazy"', '') : icon(c.sci, c.name)}<i class="gs"></i></div>
       <div class="no">No.${pad3(i + 1)}</div><div class="nm">${esc(c.name)}</div></button>`).join('')}</div>`
     : `<div class="empty">${ballSvg()}<div class="ttl">No birds caught yet</div><div>Swipe the ball up to catch a bird by song, photo, description or from the list.</div></div>`}`;
   v.querySelectorAll('.t').forEach(b => b.onclick = () => openBird(b.dataset.sci));
@@ -125,6 +125,9 @@ async function renderDex() {
   if (q) { q.oninput = () => filterRows(v, '.grid .t', state.dexQ = q.value); filterRows(v, '.grid .t', state.dexQ); }
   $('#cardBtn').onclick = openTrainerCard;
   $('#mapBtn').onclick = () => openCatchMap();
+  // Saved so index.html can paint the dex the instant the app opens, before any code loads.
+  clearTimeout(renderDex.snap);
+  renderDex.snap = setTimeout(() => { try { if (!state.dexQ && state.tab === 'dex') localStorage.setItem('dexSnap', v.innerHTML); } catch {} }, 800);
   updateRegionLine(list);
 }
 
@@ -1101,6 +1104,8 @@ function fitScreen() {
 addEventListener('resize', fitScreen); addEventListener('pageshow', fitScreen);
 
 async function init() {
+  // iOS only shows :active (pressed) styles when a touch listener exists; the instant press feedback makes taps feel quick.
+  document.addEventListener('touchstart', () => {}, { passive: true });
   fitScreen();
   bindSwipeBack();
   bindBall();
@@ -1118,14 +1123,13 @@ async function init() {
       // A Home Screen app often resumes instead of reopening, so check for a new version whenever it comes back.
       document.addEventListener('visibilitychange', () => { if (!document.hidden) reg.update().catch(() => {}); });
     }).catch(() => {});
-    // The app opens from its saved copy; when a new version has downloaded, switch to it at a calm moment.
-    let had = !!navigator.serviceWorker.controller;
-    navigator.serviceWorker.addEventListener('controllerchange', () => {
-      if (!had) { had = true; return; }
-      const reload = () => { if (!$('#layer').children.length) location.reload(); };
-      reload();
-      document.addEventListener('visibilitychange', () => { if (document.hidden) location.reload(); });
-      $('#layer').addEventListener('click', () => setTimeout(reload, 400));
+    // The app opens from its saved copy. A new version that downloads in the background is used the next time the
+    // app starts, or when you come back to it after 15+ minutes away; it never reloads while you're using it.
+    let had = !!navigator.serviceWorker.controller, fresh = false, hiddenAt = 0;
+    navigator.serviceWorker.addEventListener('controllerchange', () => { if (had) fresh = true; had = true; });
+    document.addEventListener('visibilitychange', () => {
+      if (document.hidden) { hiddenAt = Date.now(); return; }
+      if (fresh && hiddenAt && Date.now() - hiddenAt > 15 * 60e3 && !$('#layer').children.length) location.reload();
     });
   }
 }

@@ -1,3 +1,8 @@
+@font-face{font-family:'Pixelify Sans';font-weight:500;font-display:swap;src:url(fonts/pixelify-sans-latin-500-normal.woff2) format('woff2')}
+@font-face{font-family:'Pixelify Sans';font-weight:700;font-display:swap;src:url(fonts/pixelify-sans-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:'Figtree';font-weight:400;font-display:swap;src:url(fonts/figtree-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:'Figtree';font-weight:600;font-display:swap;src:url(fonts/figtree-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:'Figtree';font-weight:700;font-display:swap;src:url(fonts/figtree-latin-700-normal.woff2) format('woff2')}
 :root{
   --bg:#1a3023; --panel:#24402e; --panel2:#2c4b37; --fg:#e6eadb; --mut:#93a892; --gold:#e7c27e; --acc:#d39b4a;
   --bark:#2b1d13; --ink:#0c0c0a; --cream:#e9e4d2; --paper-ink:#22201a;
@@ -91,15 +96,13 @@ img{max-width:100%;display:block}
 
 /* overlays */
 #layer:empty{display:none}
-@keyframes ovfade{from{opacity:0}}
-@keyframes ovslide{from{opacity:.4;transform:translateX(28px)}}
+@keyframes ovfade{from{opacity:.6}}
+@keyframes ovslide{from{transform:translateX(18px)}}
 @media (prefers-reduced-motion:reduce){.ov{animation:none!important}}
-.grid .t,.nr{content-visibility:auto;contain-intrinsic-size:auto 120px}
-.nr{contain-intrinsic-size:auto 58px}
 button{touch-action:manipulation}
-.ov{position:fixed;top:0;left:0;right:0;height:100%;will-change:transform;z-index:20;display:flex;flex-direction:column;background:rgba(12,18,14,.95);animation:ovfade .16s ease-out;
+.ov{position:fixed;top:0;left:0;right:0;height:100%;will-change:transform;z-index:20;display:flex;flex-direction:column;background:rgba(12,18,14,.95);animation:ovfade .1s ease-out;
   padding:calc(env(safe-area-inset-top) + 30px) max(14px,env(safe-area-inset-right)) calc(14px + env(safe-area-inset-bottom)) max(14px,env(safe-area-inset-left))}
-.ov.solid{animation:ovslide .2s ease-out;background:var(--bg);background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:16px 16px}
+.ov.solid{animation:ovslide .12s ease-out;background:var(--bg);background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:16px 16px}
 .ov .scroll{flex:1;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch}
 .tbox{background:var(--cream);color:var(--paper-ink);border-radius:3px;box-shadow:inset 0 0 0 2px var(--bark),inset 0 0 0 4px #c9a061;padding:12px 14px;font-family:var(--px);font-size:16px;line-height:1.35}
 .tbox small{display:block;font-family:var(--sans);font-size:12px;opacity:.7;margin-top:4px}
@@ -290,3 +293,8 @@ input.search{margin:8px 0 2px;padding:7px 10px;font-size:15px}
 .legend{display:flex;gap:14px;font-size:12px;color:var(--mut);margin-top:4px}
 .legend i{display:inline-block;width:10px;height:10px;border-radius:50%;margin-right:5px;vertical-align:-1px}
 .hstat{font-size:12px;margin-top:6px}
+
+/* instant press feedback */
+button:active,.btn:active,a.btn:active{filter:brightness(1.25);transform:scale(.97)}
+#ball:active{transform:translateX(-50%) scale(.96)}
+.t:active .fig,.nr:active{filter:brightness(1.3)}
