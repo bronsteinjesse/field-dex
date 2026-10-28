@@ -1,7 +1,7 @@
 // Offline support and instant opens: the app shell is saved on install and served from the phone.
 // Bumping SHELL ships an update: the new worker downloads every file fresh, takes over, and the page reloads at a calm moment.
 // The sound model and photos are cached the first time they load.
-const SHELL = 'shell-v35', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v3';
+const SHELL = 'shell-v36', RUNTIME = 'runtime-v1', SPRITES = 'sprites-v3';
 const FILES = ['./', 'index.html', 'style.css', 'manifest.webmanifest', 'js/app.js', 'js/api.js', 'js/bird.js', 'js/data.js', 'js/match.js', 'js/sound.js', 'js/store.js', 'js/card.js', 'js/map.js', 'js/forecast.js', 'js/looks.js', 'js/sprites.js', 'js/songid.js', 'js/lite.js', 'js/photo.js', 'js/marks.js', 'vendor/litert/index.js', 'icons/icon-192.png', 'icons/icon-180.png',
   'fonts/pixelify-sans-latin-500-normal.woff2', 'fonts/pixelify-sans-latin-700-normal.woff2', 'fonts/figtree-latin-400-normal.woff2', 'fonts/figtree-latin-600-normal.woff2', 'fonts/figtree-latin-700-normal.woff2'];
 

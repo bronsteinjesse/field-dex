@@ -232,7 +232,7 @@ async function renderNearby() {
   const toFind = sp.filter(s => !caught.has(s.sci));
   const hunt = dailyHunt(sp);
   const rares = state.nearby.notable.filter(s => !caught.has(s.sci)).slice(0, 5);
-  const row = (s, extra = '') => `<button class="nr" data-sci="${esc(s.sci)}" data-name="${esc(s.name)}"><div class="ic">${icon(s.sci, s.name, { kind: 'sil', sil: '#45684f' })}</div>
+  const row = (s, extra = '') => `<button class="nr" data-sci="${esc(s.sci)}" data-name="${esc(s.name)}"><div class="ic">${icon(s.sci, s.name, caught.has(s.sci) ? undefined : { kind: 'sil', sil: '#45684f' })}</div>
     <div class="mid"><b>${esc(s.name)}${extra}</b><div class="bar"><i style="width:${Math.max(3, Math.round(s.chance * 100))}%"></i></div><small>${Math.round(s.chance * 100)}% chance · ${HAB_WORD[habitatOf(s.sci, s.name)]} · ${(s.nearKm ?? s.best?.km ?? s.lastKm).toFixed(1)} km</small></div>
     <span class="rw">+${tierOfChance(s.chance)}</span></button>`;
   v.innerHTML = `<div class="hdr"><div class="ttl">NEARBY</div><div class="ctr"><span><b>${toFind.length}</b> TO FIND</span></div></div>
@@ -255,7 +255,7 @@ async function renderNearby() {
   const nq = v.querySelector('#nearQ'), hits = v.querySelector('#nearHits');
   const search = () => {
     const q = (state.nearQ = nq.value).trim().toLowerCase();
-    v.querySelectorAll(':scope > :not(.hdr):not(.sub):not(#nearQ):not(#nearHits)').forEach(x => x.hidden = !!q);
+    v.querySelectorAll(':scope > :not(.hdr):not(.sub):not(.clrwrap):not(#nearQ):not(#nearHits)').forEach(x => x.hidden = !!q);
     if (!q) { hits.innerHTML = ''; return; }
     const all = [...state.nearby.species, ...state.nearby.notable.filter(r => !state.nearby.species.some(s => s.sci === r.sci)).map(r => ({ ...r, chance: 0.05 }))];
     const f = all.filter(s => s.name.toLowerCase().includes(q) || s.sci.toLowerCase().includes(q));
@@ -340,7 +340,7 @@ async function openBird(sci, nameHint) {
   const name = c?.name || cur?.n || nameHint || sci;
   const idx = [...state.catches].sort((a, b) => a.first.localeCompare(b.first)).findIndex(x => x.sci === sci);
   const el = overlay(`<div class="topbar"><button class="close" data-x>◀︎ BACK</button><span class="muted">${c ? '' : 'Not caught yet'}</span></div>
-    <div class="ptabs">${['INFO', 'PHOTOS', 'AREA', 'SONG'].map((t, i) => `<button data-tab="${t}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div>
+    <div class="ptabs">${['INFO', 'AREA', 'SONG'].map((t, i) => `<button data-tab="${t}" class="${i ? '' : 'on'}">${t}</button>`).join('')}</div>
     <div class="scroll" id="bp"></div>`, 'solid');
   el.querySelector('[data-x]').onclick = () => { hush(); el.remove(); };
   const body = el.querySelector('#bp');
@@ -348,19 +348,20 @@ async function openBird(sci, nameHint) {
     INFO: async () => {
       const tier = tierOf(sci), hab = habitatOf(sci, name);
       const habCls = { water: 'b', sky: 'b', woods: 'g', field: 'g', edge: 'g', town: 'br' }[hab];
-      // Photos first, shown on the dex's own screen so the page still reads like a Pokédex entry.
+      // Photos first, shown on the dex's own screen, with a compact dex entry under it so it all fits on one screen.
+      const how = { voice: 'described', sound: 'by song', photo: 'by photo', list: 'from list', import: 'imported' };
       body.innerHTML = `<div class="dexscreen"><div class="dsglass"><div class="gal" id="ig"><figure><div class="ph">${icon(sci, name)}</div></figure></div></div>
         <div class="dsbar"><i class="led"></i><i class="led a"></i><span id="icount">LOADING PHOTOS…</span><small id="icred"></small></div></div>
-        <div class="info"><div class="spr">${icon(sci, name, c ? undefined : { kind: 'sil', sil: '#2c4a36' })}</div><div class="idc">
-        <div class="idbox"><button class="spk" id="spk" aria-label="Read this entry aloud">${SPEAKER}</button><div class="t1">${c ? pad3(idx + 1) + ' ' : ''}${esc(name)}</div><div class="k">${esc(cur?.cat || 'Bird')} · <i>${esc(sci)}</i></div></div>
-        <div class="types"><span class="ty ${habCls}">${HAB_WORD[hab]}</span><span class="ty ${tier.rare ? 'r' : 'br'}">${tier.name}</span></div>
-        ${cur?.len ? `<div class="ms"><span>Length</span><b>${cur.len} in</b><span>Wing</span><b>${cur.wing} in</b><span>Weight</span><b>${cur.wt} oz</b></div>` : ''}</div></div>
-        <div class="flav" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
+        <div class="idrow"><div class="spr">${icon(sci, name, c ? undefined : { kind: 'sil', sil: '#2c4a36' })}</div>
+          <div class="idbox"><button class="spk" id="spk" aria-label="Read this entry aloud">${SPEAKER}</button><div class="t1">${c ? pad3(idx + 1) + ' ' : ''}${esc(name)}</div><div class="k">${esc(cur?.cat || 'Bird')} · <i>${esc(sci)}</i></div>
+          <div class="types"><span class="ty ${habCls}">${HAB_WORD[hab]}</span><span class="ty ${tier.rare ? 'r' : 'br'}">${tier.name}</span>${cur?.len ? `<span class="stat">${cur.len} in · ${cur.wt} oz</span>` : ''}</div></div></div>
+        <div class="flav clamp" id="flav">${cur?.fact ? esc(cur.fact) : 'Loading…'}</div>
+        <div class="actrow"><button class="btn" id="quickCatch">${c ? 'SEEN IT AGAIN' : 'I SEE IT · CATCH'}</button>${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt" id="onMap">MAP</button>' : ''}</div>
         <div class="meta">${c ? `<span>Caught ${fmtDate(c.first)} · seen ${c.count}×</span>` : '<span>Not caught yet</span>'}<span>+${tier.xp} XP</span></div>
-        <button class="btn full" id="quickCatch" style="margin-top:10px">${c ? 'SEEN IT AGAIN' : 'I SEE IT · CATCH'}</button>
-        ${c?.sightings.some(x => x.lat != null) ? '<button class="btn alt full" id="onMap" style="margin-top:10px">SEE ON CATCH MAP</button>' : ''}
-        ${c ? `<div class="lab">YOUR SIGHTINGS</div>${[...c.sightings].reverse().map(s => `<div class="sight"><span>${fmtDate(s.date)} · ${({ voice: 'described', sound: 'by song', photo: 'by photo', list: 'from list', import: 'imported' })[s.method] || s.method || ''}</span><button class="close" data-del="${esc(s.date)}">✕ REMOVE</button></div>`).join('')}` : ''}
+        ${c ? `<div class="lab">YOUR SIGHTINGS</div>${[...c.sightings].reverse().map(s => `<div class="sight"><span>${fmtDate(s.date)} · ${how[s.method] || s.method || ''}</span><button class="close" data-del="${esc(s.date)}">✕ REMOVE</button></div>`).join('')}` : ''}
         ${SPRITES[slug(sci)] ? `<div class="credit">Sprite traced from a photo: ${esc(SPRITES[slug(sci)])}</div>` : ''}`;
+      // Tap the description to read all of it.
+      body.querySelector('#flav').onclick = e => e.currentTarget.classList.toggle('clamp');
       body.querySelector('#onMap')?.addEventListener('click', () => openCatchMap(sci));
       body.querySelectorAll('[data-del]').forEach(b => b.onclick = async () => {
         const last = c.sightings.length === 1;
@@ -377,29 +378,24 @@ async function openBird(sci, nameHint) {
         const flav = body.querySelector('#flav')?.textContent || '';
         speak([name + '.', cur?.cat ? `The ${cur.cat}.` : '', flav === 'Loading…' ? '' : flav].join(' '), b);
       };
-      api.taxonInfo(sci).catch(() => null).then(t => {
+      (async () => {
+        const mine = [];
+        for (const x of c?.sightings || []) if (x.photo) { const p = await photos.get(x.photo).catch(() => null); if (p) mine.push({ src: URL.createObjectURL(p.blob), credit: `Your photo · ${fmtDate(x.date)}` }); }
+        const t = await api.taxonInfo(sci).catch(() => null);
         const gal = body.querySelector('#ig'), cnt = body.querySelector('#icount'), cred = body.querySelector('#icred');
         if (!gal) return;
-        const ph = t?.photos || [];
+        const ph = [...mine.reverse(), ...(t?.photos || []).map(p => ({ src: p.large || p.medium, credit: p.credit }))];
         if (!ph.length) { cnt.textContent = 'NO PHOTOS · NEEDS A SIGNAL'; return; }
-        gal.innerHTML = ph.map((p, k) => `<figure><img ${k > 1 ? 'loading="lazy"' : ''} src="${esc(p.large || p.medium)}" alt="${esc(name)}"></figure>`).join('');
+        gal.innerHTML = ph.map((p, k) => `<figure><img ${k > 1 ? 'loading="lazy"' : ''} src="${esc(p.src)}" alt="${esc(name)}"></figure>`).join('');
         const upd = () => { const k = Math.min(ph.length - 1, Math.round(gal.scrollLeft / gal.clientWidth)); cnt.textContent = `PHOTO ${k + 1}/${ph.length}`; cred.textContent = ph[k].credit || ''; };
         gal.onscroll = upd; upd();
         gal.addEventListener('error', e => { e.target.closest('figure')?.remove(); }, true);
-      });
+      })();
       if (!cur?.fact) {
         const t = await api.taxonInfo(sci).catch(() => null);
         const f = body.querySelector('#flav');
         if (f) f.textContent = t?.summary ? t.summary.split(/(?<=\.)\s/).slice(0, 2).join(' ') : 'No description available offline.';
       }
-    },
-    PHOTOS: async () => {
-      body.innerHTML = '<p class="muted" style="margin-top:12px">Loading photos…</p>';
-      const t = await api.taxonInfo(sci).catch(() => null);
-      const mine = [];
-      for (const s of c?.sightings || []) if (s.photo) { const p = await photos.get(s.photo); if (p) mine.push({ url: URL.createObjectURL(p.blob), date: s.date }); }
-      body.innerHTML = `${t?.photos?.length ? `<div class="gal">${t.photos.map(p => `<figure><img loading="lazy" src="${esc(p.large || p.medium)}" alt="${esc(name)}" onerror="this.closest('figure').remove()"><figcaption>${esc(p.credit)} · iNaturalist</figcaption></figure>`).join('')}</div><p class="muted">Swipe for more · ${t.photos.length} photos</p>` : '<p class="muted" style="margin-top:12px">No photos available right now.</p>'}
-        <div class="lab">YOUR CATCHES (${mine.length})</div>${mine.length ? `<div class="thumbs">${mine.map(m => `<img src="${m.url}" alt="Your photo from ${fmtDate(m.date)}">`).join('')}</div>` : '<p class="muted">Photos you take while catching this bird show up here.</p>'}`;
     },
     AREA: async () => {
       body.innerHTML = '<p class="muted" style="margin-top:12px">Checking recent reports…</p>';
@@ -755,7 +751,7 @@ async function pickFromList(ctx) {
   const mineUrl = ctx.photo ? URL.createObjectURL(ctx.photo) : null;
   const el = overlay(`<div class="topbar"><button class="close" data-x>✕ CANCEL</button><span class="muted">${all.length} birds</span></div>
     ${mineUrl ? `<div class="mine" style="height:120px;margin:0 0 10px"><img src="${mineUrl}" alt="Your photo"></div>` : ''}
-    <input id="q" placeholder="Search by name" autocomplete="off"><div class="scroll list" id="lst" style="margin-top:8px"></div>`, 'solid');
+    <input id="q" type="search" placeholder="Search by name" autocomplete="off"><div class="scroll list" id="lst" style="margin-top:8px"></div>`, 'solid');
   const lst = el.querySelector('#lst');
   const draw = q => {
     const f = q ? all.filter(x => x.name.toLowerCase().includes(q) || x.sci.toLowerCase().includes(q)) : all;
@@ -794,7 +790,7 @@ function gotcha(c, ctx, forced = false) {
     el.querySelector('#sc').classList.add('won');
     const res = await saveCatch(c, ctx);
     msg.innerHTML = `Gotcha! ${esc(c.name)} was caught!`;
-    el.querySelector('#after').innerHTML = `<div class="reg">${icon(c.sci, c.name)}<div><b>${res.isNew ? `No.${pad3(res.no)} registered` : `Seen again · ${res.count}×`}</b><small>+${res.xp} XP · ${res.tier}${res.levelUp ? ` · LEVEL UP! LV ${res.level}` : ''}${res.badge ? `<br>${res.badge} BADGE EARNED! See it on your trainer card.` : ''}<br>${ctx.photo ? 'Your photo was saved to its Photos tab.' : ctx.audio ? 'Your recording was saved to its Song tab.' : ''}</small></div></div>
+    el.querySelector('#after').innerHTML = `<div class="reg">${icon(c.sci, c.name)}<div><b>${res.isNew ? `No.${pad3(res.no)} registered` : `Seen again · ${res.count}×`}</b><small>+${res.xp} XP · ${res.tier}${res.levelUp ? ` · LEVEL UP! LV ${res.level}` : ''}${res.badge ? `<br>${res.badge} BADGE EARNED! See it on your trainer card.` : ''}<br>${ctx.photo ? 'Your photo was saved to its dex entry.' : ctx.audio ? 'Your recording was saved to its Song tab.' : ''}</small></div></div>
       <div class="capfoot" style="margin-top:12px"><div class="row"><button class="btn" id="viewEntry">VIEW ENTRY</button><button class="btn alt" id="ok">DONE</button></div><button class="btn alt full" id="undo">↶ UNDO, WRONG BIRD</button></div>`;
     el.querySelector('#undo').onclick = async () => { await removeSighting(c.sci, res.date); el.remove(); toast(`Undone. ${c.name} ${res.isNew ? 'was taken out of your dex' : 'sighting removed'}.`); };
     el.querySelector('#viewEntry').onclick = () => { el.remove(); openBird(c.sci, c.name); };
@@ -1115,6 +1111,21 @@ function fitScreen() {
   if (standalone) document.documentElement.style.setProperty('--full', Math.max(screen.height, innerHeight, document.documentElement.clientHeight) + 'px');
 }
 addEventListener('resize', fitScreen); addEventListener('pageshow', fitScreen);
+
+// Every search box gets a ✕ that empties it in one tap (iPhone doesn't show one).
+function addClearButtons(root) {
+  root.querySelectorAll('input[type=search]:not([data-clr])').forEach(inp => {
+    inp.dataset.clr = '1';
+    const wrap = document.createElement('span'); wrap.className = 'clrwrap';
+    inp.replaceWith(wrap); wrap.append(inp);
+    const x = document.createElement('button'); x.type = 'button'; x.className = 'clr'; x.setAttribute('aria-label', 'Clear search'); x.textContent = '✕';
+    const sync = () => { x.hidden = !inp.value; };
+    x.onclick = () => { inp.value = ''; inp.dispatchEvent(new Event('input', { bubbles: true })); sync(); };
+    inp.addEventListener('input', sync); sync();
+    wrap.append(x);
+  });
+}
+new MutationObserver(() => addClearButtons(document)).observe(document.getElementById('app'), { childList: true, subtree: true });
 
 async function init() {
   // iOS only shows :active (pressed) styles when a touch listener exists; the instant press feedback makes taps feel quick.
