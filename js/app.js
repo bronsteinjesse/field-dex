@@ -348,7 +348,10 @@ async function openBird(sci, nameHint) {
     INFO: async () => {
       const tier = tierOf(sci), hab = habitatOf(sci, name);
       const habCls = { water: 'b', sky: 'b', woods: 'g', field: 'g', edge: 'g', town: 'br' }[hab];
-      body.innerHTML = `<div class="info"><div class="spr">${icon(sci, name, c ? undefined : { kind: 'sil', sil: '#2c4a36' })}</div><div class="idc">
+      // Photos first, shown on the dex's own screen so the page still reads like a Pokédex entry.
+      body.innerHTML = `<div class="dexscreen"><div class="dsglass"><div class="gal" id="ig"><figure><div class="ph">${icon(sci, name)}</div></figure></div></div>
+        <div class="dsbar"><i class="led"></i><i class="led a"></i><span id="icount">LOADING PHOTOS…</span><small id="icred"></small></div></div>
+        <div class="info"><div class="spr">${icon(sci, name, c ? undefined : { kind: 'sil', sil: '#2c4a36' })}</div><div class="idc">
         <div class="idbox"><button class="spk" id="spk" aria-label="Read this entry aloud">${SPEAKER}</button><div class="t1">${c ? pad3(idx + 1) + ' ' : ''}${esc(name)}</div><div class="k">${esc(cur?.cat || 'Bird')} · <i>${esc(sci)}</i></div></div>
         <div class="types"><span class="ty ${habCls}">${HAB_WORD[hab]}</span><span class="ty ${tier.rare ? 'r' : 'br'}">${tier.name}</span></div>
         ${cur?.len ? `<div class="ms"><span>Length</span><b>${cur.len} in</b><span>Wing</span><b>${cur.wing} in</b><span>Weight</span><b>${cur.wt} oz</b></div>` : ''}</div></div>
@@ -374,6 +377,16 @@ async function openBird(sci, nameHint) {
         const flav = body.querySelector('#flav')?.textContent || '';
         speak([name + '.', cur?.cat ? `The ${cur.cat}.` : '', flav === 'Loading…' ? '' : flav].join(' '), b);
       };
+      api.taxonInfo(sci).catch(() => null).then(t => {
+        const gal = body.querySelector('#ig'), cnt = body.querySelector('#icount'), cred = body.querySelector('#icred');
+        if (!gal) return;
+        const ph = t?.photos || [];
+        if (!ph.length) { cnt.textContent = 'NO PHOTOS · NEEDS A SIGNAL'; return; }
+        gal.innerHTML = ph.map((p, k) => `<figure><img ${k > 1 ? 'loading="lazy"' : ''} src="${esc(p.large || p.medium)}" alt="${esc(name)}"></figure>`).join('');
+        const upd = () => { const k = Math.min(ph.length - 1, Math.round(gal.scrollLeft / gal.clientWidth)); cnt.textContent = `PHOTO ${k + 1}/${ph.length}`; cred.textContent = ph[k].credit || ''; };
+        gal.onscroll = upd; upd();
+        gal.addEventListener('error', e => { e.target.closest('figure')?.remove(); }, true);
+      });
       if (!cur?.fact) {
         const t = await api.taxonInfo(sci).catch(() => null);
         const f = body.querySelector('#flav');
